@@ -16,4 +16,14 @@ public class MessageController {
     public String newMail(){
         return "newMail";
     }
+
+    @GetMapping(path = "/sent")
+    public String sentMails(){
+        return "sent";
+    }
+
+    @GetMapping(path = "/all")
+    public String allMail(){
+        return "archieved";
+    }
 }
