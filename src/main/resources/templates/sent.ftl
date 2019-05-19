@@ -1,6 +1,8 @@
 <#include "base.ftl">
 
-
+<#macro title>
+    Sent Mail
+</#macro>
 <#macro body>
     <td valign=top>
     <table width=100% cellpadding=0 cellspacing=0 border=0>

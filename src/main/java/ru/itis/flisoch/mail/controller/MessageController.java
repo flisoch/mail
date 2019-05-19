@@ -26,4 +26,9 @@ public class MessageController {
     public String allMail(){
         return "archieved";
     }
+
+    @GetMapping(path = "/search-options")
+    public String searchOptionsPage(){
+        return "searchOptions";
+    }
 }

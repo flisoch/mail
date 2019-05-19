@@ -2,6 +2,7 @@
 <#include "leftSideBar.ftl">
 <#macro title></#macro>
 <#macro imports>
+
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
     <link rel="canonical" href="/mail"/>
     <link rel="stylesheet" type="text/css"
@@ -93,6 +94,7 @@
 <#macro page>
     <!doctype html>
     <html lang="en">
+    <pre style="font-size: 0;display: none;visibility: hidden;"></pre>
     <head>
 
         <@imports/>

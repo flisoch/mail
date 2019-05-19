@@ -9,7 +9,7 @@
 
 <table width=100% cellpadding=0 cellspacing=0 border=0>
     <tr>
-        <td width=143 rowspan=3><h1><a href="/mail  "><img src="//www.gmail.com/mail/help/images/logonew.gif" width=143
+        <td width=143 rowspan=3><h1><a href="/mail/inbox"><img src="//www.gmail.com/mail/help/images/logonew.gif" width=143
                                                            height=59 border=0></a></h1></td>
         <td width=1 rowspan=3>&nbsp;</td>
         <td height=25 colspan=2 align=right valign=top>
