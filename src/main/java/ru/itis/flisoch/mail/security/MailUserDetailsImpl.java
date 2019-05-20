@@ -48,4 +48,9 @@ public class MailUserDetailsImpl implements MailUserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    @Override
+    public User getUser() {
+        return user;
+    }
 }
