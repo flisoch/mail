@@ -9,7 +9,6 @@ import ru.itis.flisoch.mail.form.RegistrationForm;
 import ru.itis.flisoch.mail.service.UserService;
 
 @Controller
-@RequestMapping(path = "/registration")
 public class RegistrationController {
 
     private final UserService userService;
@@ -18,16 +17,21 @@ public class RegistrationController {
         this.userService = userService;
     }
 
-    @PostMapping
+    @PostMapping("/registration")
     public String registration(RegistrationForm form, ModelMap modelMap) {
         UserDto user = userService.saveNewUser(form);
         modelMap.put("user", user);
-        return "redirect:/mail/inbox";
+        return "redirect:/auth";
     }
 
-    @GetMapping
+    @GetMapping("/registration")
     public String registrationPage() {
         return "registration";
+    }
+
+    @GetMapping("/auth")
+    public String signInPage() {
+        return "auth";
     }
 
 
