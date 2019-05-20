@@ -11,12 +11,6 @@
 
 </#macro>
 
-<#macro import>
-    <link rel="stylesheet" href="/static/css/style.css">
-    <script src="/static/js/registration.js"></script>
-</#macro>
-
-
 <#macro body>
     <div class="container">
         <div class="row mt-5 pt-5">
