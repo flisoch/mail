@@ -8,7 +8,6 @@
 <#macro navbar>
 </#macro>
 <#macro left_sidebar>
-
 </#macro>
 
 <#macro body>
