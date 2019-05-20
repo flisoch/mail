@@ -61,7 +61,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .rememberMe()
-                .rememberMeParameter("remember_me")
                 .key("uniqueAndSecret")
                 .userDetailsService(userDetailsService);
     }

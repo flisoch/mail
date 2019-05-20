@@ -40,7 +40,7 @@
 
                         <div class="form-group">
                             <div class="form-check">
-                                <input class="form-check-input" name="remember_me" type="checkbox" id="remember-me">
+                                <input class="form-check-input" name="remember-me" type="checkbox" id="remember-me">
                                 <label class="form-check-label" for="remember-me">
                                     Remember me
                                 </label>
