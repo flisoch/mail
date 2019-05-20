@@ -23,8 +23,10 @@ public class User {
     private String password;
     @Transient
     private List<User> contacts;
-    @Transient
+    @OneToMany(mappedBy = "sender")
     private List<Message> messages;
     private String signature;
+
+
 
 }
