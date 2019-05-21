@@ -30,5 +30,6 @@ public class User {
     @OneToMany(mappedBy = "recipient")
     private List<MessageUser> messageUsers;
 
-
+    @OneToMany(mappedBy = "owner")
+    private List<Folder> folders;
 }

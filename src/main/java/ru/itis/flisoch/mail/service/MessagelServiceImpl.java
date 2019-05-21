@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itis.flisoch.mail.domain.*;
 import ru.itis.flisoch.mail.dto.MessageDto;
+import ru.itis.flisoch.mail.exception.LogicalException;
 import ru.itis.flisoch.mail.form.NewMailForm;
+import ru.itis.flisoch.mail.repository.FolderRepository;
 import ru.itis.flisoch.mail.repository.MessageRepository;
 import ru.itis.flisoch.mail.repository.MessageUserRepository;
 import ru.itis.flisoch.mail.repository.UserRepository;
@@ -21,12 +23,14 @@ public class MessagelServiceImpl implements MessagelService {
     private final MessageRepository messageRepository;
     private final UserRepository userRepository;
     private final MessageUserRepository messageUserRepository;
+    private final FolderRepository folderRepository;
 
     @Autowired
-    public MessagelServiceImpl(MessageRepository messageRepository, UserRepository userRepository, MessageUserRepository messageUserRepository) {
+    public MessagelServiceImpl(MessageRepository messageRepository, UserRepository userRepository, MessageUserRepository messageUserRepository, FolderRepository folderRepository) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.messageUserRepository = messageUserRepository;
+        this.folderRepository = folderRepository;
     }
 
 
@@ -55,13 +59,29 @@ public class MessagelServiceImpl implements MessagelService {
     }
 
     private MessageUser userInfoToMessage(User user, Message finalMessage, ReceiptType type) {
-        return messageUserRepository.save(
+        MessageUser messageUser = messageUserRepository.save(
                 MessageUser.builder()
-                    .recipient(user)
-                    .receiptType(type)
-                    .status(MessageStatus.RECIEVED)
-                    .message(finalMessage).build()
+                        .recipient(user)
+                        .receiptType(type)
+                        .status(MessageStatus.RECIEVED)
+                        .message(finalMessage).build()
         );
+        putMessageToFolders(messageUser);
+        return messageUser;
+    }
+
+    private void putMessageToFolders(MessageUser messageUser) {
+        Folder inbox = folderRepository.findByNameAndOwner(
+                DefaultFolderNames.INBOX.name(), messageUser.getRecipient())
+                .orElseThrow(()-> new LogicalException("user doesn't have folder " + DefaultFolderNames.INBOX.name()));
+        inbox.getMessages().add(messageUser);
+        Folder all = folderRepository.findByNameAndOwner(
+                DefaultFolderNames.ALL.name(), messageUser.getRecipient())
+                .orElseThrow(()-> new LogicalException("user" + messageUser.getRecipient().getUsername() +
+                        "doesn't have folder " + DefaultFolderNames.ALL.name()));
+        inbox.getMessages().add(messageUser);
+        folderRepository.save(inbox);
+        folderRepository.save(all);
     }
 
     @Transactional

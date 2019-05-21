@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Builder
@@ -26,4 +27,7 @@ public class MessageUser {
     private ReceiptType receiptType;
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
+
+    @ManyToMany(mappedBy = "messages")
+    private List<Folder> folders;
 }
