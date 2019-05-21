@@ -9,6 +9,7 @@ import java.util.List;
 @Builder
 @Data
 @ToString(exclude = {"messages", "messageUsers", "folders", "contacts"})
+@EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

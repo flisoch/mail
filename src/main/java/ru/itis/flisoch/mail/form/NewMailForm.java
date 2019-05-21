@@ -15,6 +15,6 @@ public class NewMailForm {
     private List<String> bcc;
     private String subject;
     private String text;
-    
+    private Long parentMessageId;
 
 }
