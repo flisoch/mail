@@ -32,8 +32,13 @@ public class Message {
     private List<MessageUser> messageUsers;
     @Transient
     private Folder folder;
-    @Transient
+
+    @ManyToOne
+    @JoinColumn(name = "parent_message_id")
     private Message parentMessage;
+
+    @OneToMany(mappedBy = "parentMessage")
+    private List<Message> childrenMessages;
 
     public static Message from(NewMailForm form) {
         return Message.builder()

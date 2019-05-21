@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.itis.flisoch.mail.domain.*;
 import ru.itis.flisoch.mail.dto.MessageDto;
 import ru.itis.flisoch.mail.exception.LogicalException;
+import ru.itis.flisoch.mail.exception.ResourceNotFoundException;
 import ru.itis.flisoch.mail.form.NewMailForm;
 import ru.itis.flisoch.mail.repository.FolderRepository;
 import ru.itis.flisoch.mail.repository.MessageRepository;
@@ -16,6 +17,7 @@ import ru.itis.flisoch.mail.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,11 +42,30 @@ public class MessagelServiceImpl implements MessagelService {
         Message message = Message.from(form);
         message.setSender(sender);
         message.setSendTime(LocalDateTime.now());
+        Long parentId = form.getParentMessageId();
+        if (parentId != null) {
+            Message parent = messageRepository.findById(parentId)
+                    .orElseThrow(() -> new ResourceNotFoundException("parent message with id " + parentId + "not found"));
+            message.setParentMessage(parent);
+        }
         message = messageRepository.save(message);
 
         addUsersToMessage(message, form);
 
         return MessageDto.from(message);
+    }
+
+    @Override
+    @Transactional
+    public List<MessageDto> folderMessages(User authUser, String folderName) {
+        User user = userRepository.findByUsername(authUser.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        Folder folder = user.getFolders().stream()
+                .filter(f -> f.getOwner().equals(user) && f.getName().equals(folderName)).findAny()
+                .orElseThrow(() -> new ResourceNotFoundException("nout found folder with name " + folderName));
+        return folder.getMessages().stream()
+                .map(messageUser -> MessageDto.from(messageUser.getMessage()))
+                .collect(Collectors.toList());
     }
 
     private void addUsersToMessage(Message message, NewMailForm form) {
@@ -73,13 +94,13 @@ public class MessagelServiceImpl implements MessagelService {
     private void putMessageToFolders(MessageUser messageUser) {
         Folder inbox = folderRepository.findByNameAndOwner(
                 DefaultFolderNames.INBOX.name(), messageUser.getRecipient())
-                .orElseThrow(()-> new LogicalException("user doesn't have folder " + DefaultFolderNames.INBOX.name()));
-        inbox.getMessages().add(messageUser);
+                .orElseThrow(() -> new LogicalException("user doesn't have folder " + DefaultFolderNames.INBOX.name()));
         Folder all = folderRepository.findByNameAndOwner(
                 DefaultFolderNames.ALL.name(), messageUser.getRecipient())
-                .orElseThrow(()-> new LogicalException("user" + messageUser.getRecipient().getUsername() +
+                .orElseThrow(() -> new LogicalException("user" + messageUser.getRecipient().getUsername() +
                         "doesn't have folder " + DefaultFolderNames.ALL.name()));
         inbox.getMessages().add(messageUser);
+        all.getMessages().add(messageUser);
         folderRepository.save(inbox);
         folderRepository.save(all);
     }

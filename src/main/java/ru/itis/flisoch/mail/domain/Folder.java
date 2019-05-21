@@ -23,7 +23,7 @@ public class Folder {
     @JoinTable(
             name = "message_user_folder",
             joinColumns = @JoinColumn(name = "folder_id"),
-            inverseJoinColumns = @JoinColumn(name = "message_id")
+            inverseJoinColumns = @JoinColumn(name = "message_user_id")
     )
     private List<MessageUser> messages;
 }
