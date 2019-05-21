@@ -1,16 +1,15 @@
 package ru.itis.flisoch.mail.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import ru.itis.flisoch.mail.domain.DefaultFolderNames;
 import ru.itis.flisoch.mail.domain.User;
 import ru.itis.flisoch.mail.dto.MessageDto;
+import ru.itis.flisoch.mail.form.MessagesAndAction;
 import ru.itis.flisoch.mail.form.NewMailForm;
 import ru.itis.flisoch.mail.security.MailUserDetails;
 import ru.itis.flisoch.mail.service.MessagelService;
@@ -61,5 +60,13 @@ public class MessageController {
         MessageDto mail = messagelService.save(form, sender);
         modelMap.put("mail", mail);
         return "redirect:/mail/" + mail.getId();
+    }
+
+    @PutMapping
+    public @ResponseBody ResponseEntity handleMail(Authentication authentication,
+                                                   @RequestBody MessagesAndAction messagesAndAction){
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        messagelService.handleMail(user, messagesAndAction);
+        return ResponseEntity.status(200).build();
     }
 }

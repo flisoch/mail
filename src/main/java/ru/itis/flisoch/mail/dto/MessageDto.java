@@ -1,9 +1,6 @@
 package ru.itis.flisoch.mail.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.itis.flisoch.mail.domain.Message;
 import ru.itis.flisoch.mail.domain.MessageStatus;
 import ru.itis.flisoch.mail.domain.ReceiptType;
@@ -16,6 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of = {"id", "sender"})
 public class MessageDto {
     private Long id;
     private String subject;

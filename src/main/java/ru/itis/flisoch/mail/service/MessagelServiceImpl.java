@@ -8,6 +8,7 @@ import ru.itis.flisoch.mail.domain.*;
 import ru.itis.flisoch.mail.dto.MessageDto;
 import ru.itis.flisoch.mail.exception.LogicalException;
 import ru.itis.flisoch.mail.exception.ResourceNotFoundException;
+import ru.itis.flisoch.mail.form.MessagesAndAction;
 import ru.itis.flisoch.mail.form.NewMailForm;
 import ru.itis.flisoch.mail.repository.FolderRepository;
 import ru.itis.flisoch.mail.repository.MessageRepository;
@@ -16,6 +17,7 @@ import ru.itis.flisoch.mail.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -68,7 +70,84 @@ public class MessagelServiceImpl implements MessagelService {
                     dto.setStatus(messageUser.getStatus());
                     return dto;
                 })
+                .distinct()
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void handleMail(User authUser, MessagesAndAction messagesAndAction) {
+        User user = userRepository.findByUsername(authUser.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        List<MessageUser> messageUsers = messageUserRepository
+                .findAllByIdAndRecipient(Arrays.asList(messagesAndAction.getMessagesId()), user);
+
+        if (messagesAndAction.getAction().equals(MessageAction.ARCHIVE)) {
+            archive(user, messageUsers, messagesAndAction.getFolderFrom());
+        }
+        else if(messagesAndAction.getAction().equals(MessageAction.MOVETOFOLDER)){
+            moveToFolder(user, messageUsers, messagesAndAction.getFolderFrom(), messagesAndAction.getFolderTo());
+        }
+        else {
+            MessageStatus messageStatus = statusByAction(messagesAndAction.getAction());
+            setNewStatuses(messageUsers, messageStatus);
+        }
+
+    }
+
+    @Transactional
+    public void setNewStatuses(List<MessageUser> messageUsers, MessageStatus messageStatus) {
+        messageUsers.forEach(messageUser -> messageUser.setStatus(messageStatus));
+    }
+
+    @Transactional
+    public void moveToFolder(User user, List<MessageUser> messageUsers, String folderFrom, String folderTo) {
+        messageUsers.forEach(
+                messageUser -> {
+                    Folder from = user.getFolders().stream()
+                            .filter(folder ->
+                                    folder.getName().equals(folderFrom))
+                            .findAny()
+                            .orElseThrow(() -> new ResourceNotFoundException("folder" + " not found"));
+                    from.getMessages().remove(messageUser);
+
+                    Folder to = user.getFolders().stream()
+                            .filter(folder ->
+                                    folder.getName().equals(folderTo))
+                            .findAny()
+                            .orElseThrow(() -> new ResourceNotFoundException("folder" + " not found"));
+                    to.getMessages().add(messageUser);
+                    folderRepository.save(from);
+                    folderRepository.save(to);
+                }
+        );
+    }
+
+    @Transactional
+    public void archive(User user, List<MessageUser> messageUsers, String folderName) {
+        messageUsers.forEach(
+                messageUser -> {
+                    Folder f = user.getFolders().stream()
+                            .filter(folder ->
+                                    folder.getName().equals(folderName))
+                            .findAny()
+                            .orElseThrow(() -> new ResourceNotFoundException("folder" + " not found"));
+                    f.getMessages().remove(messageUser);
+                    folderRepository.save(f);
+                }
+        );
+    }
+
+    private MessageStatus statusByAction(MessageAction action) {
+        switch (action) {
+            case DELETE:
+                return MessageStatus.DELETED;
+            case MARKREAD:
+                return MessageStatus.READ;
+            case MARKUNREAD:
+                return MessageStatus.RECEIVED;
+        }
+        throw new LogicalException("doesn't support this action" + action.name());
     }
 
     private void addUsersToMessage(Message message, NewMailForm form) {
