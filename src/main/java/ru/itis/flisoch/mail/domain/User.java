@@ -1,9 +1,6 @@
 package ru.itis.flisoch.mail.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.itis.flisoch.mail.form.RegistrationForm;
 
 import javax.persistence.*;
@@ -11,6 +8,7 @@ import java.util.List;
 
 @Builder
 @Data
+@ToString(exclude = {"messages", "messageUsers", "folders", "contacts"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

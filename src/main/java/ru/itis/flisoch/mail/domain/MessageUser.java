@@ -1,14 +1,12 @@
 package ru.itis.flisoch.mail.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 @Data
+@ToString(exclude = {"message", "recipient", "folders"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

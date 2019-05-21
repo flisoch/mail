@@ -1,9 +1,6 @@
 package ru.itis.flisoch.mail.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import ru.itis.flisoch.mail.form.NewMailForm;
 import ru.itis.flisoch.mail.util.LocalDateTimeConverter;
 
@@ -12,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@ToString(exclude = {"sender", "messageUsers", "parentMessage"})
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
