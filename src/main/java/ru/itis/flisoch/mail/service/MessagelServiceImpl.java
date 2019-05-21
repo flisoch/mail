@@ -17,7 +17,6 @@ import ru.itis.flisoch.mail.repository.UserRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,7 +63,11 @@ public class MessagelServiceImpl implements MessagelService {
                 .filter(f -> f.getOwner().equals(user) && f.getName().equals(folderName)).findAny()
                 .orElseThrow(() -> new ResourceNotFoundException("nout found folder with name " + folderName));
         return folder.getMessages().stream()
-                .map(messageUser -> MessageDto.from(messageUser.getMessage()))
+                .map(messageUser -> {
+                    MessageDto dto = MessageDto.from(messageUser.getMessage());
+                    dto.setStatus(messageUser.getStatus());
+                    return dto;
+                })
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +87,7 @@ public class MessagelServiceImpl implements MessagelService {
                 MessageUser.builder()
                         .recipient(user)
                         .receiptType(type)
-                        .status(MessageStatus.RECIEVED)
+                        .status(MessageStatus.RECEIVED)
                         .message(finalMessage).build()
         );
         putMessageToFolders(messageUser);

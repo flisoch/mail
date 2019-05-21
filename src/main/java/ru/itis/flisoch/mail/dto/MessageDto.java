@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import ru.itis.flisoch.mail.domain.Message;
+import ru.itis.flisoch.mail.domain.MessageStatus;
 import ru.itis.flisoch.mail.domain.ReceiptType;
 
 import java.time.ZoneOffset;
@@ -23,6 +24,7 @@ public class MessageDto {
     private long sendTime;
     private List<UserDto> cc;
     private List<UserDto> to;
+    private MessageStatus status;
 
     public static MessageDto from(Message message) {
         long epoch = message.getSendTime().toInstant(ZoneOffset.UTC).toEpochMilli();
