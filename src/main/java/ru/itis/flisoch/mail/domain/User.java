@@ -27,6 +27,8 @@ public class User {
     private List<Message> messages;
     private String signature;
 
+    @OneToMany(mappedBy = "recipient")
+    private List<MessageUser> messageUsers;
 
 
 }

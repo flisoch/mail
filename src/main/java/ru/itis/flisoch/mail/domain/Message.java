@@ -10,7 +10,6 @@ import ru.itis.flisoch.mail.util.LocalDateTimeConverter;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 
 @Data
 @Builder
@@ -24,29 +23,6 @@ public class Message {
     @ManyToOne
     @JoinColumn(name = "sender_id")
     private User sender;
-    @ManyToMany
-    @JoinTable(
-            name = "message_recipient",
-            joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> recipients;
-
-    @ManyToMany
-    @JoinTable(
-            name = "message_cc",
-            joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> copyRecipients;
-
-    @ManyToMany
-    @JoinTable(
-            name = "message_bcc",
-            joinColumns = @JoinColumn(name = "message_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    private List<User> hiddenCopyRecipients;
     private String subject;
     private String text;
     @Convert(converter = LocalDateTimeConverter.class)
@@ -54,12 +30,8 @@ public class Message {
     @Transient
     private List<String> attachments;
 
-    /*@ElementCollection
-    @JoinTable(name="ATTRIBUTE_VALUE_RANGE", joinColumns=@JoinColumn(name="ID"))
-    @MapKeyColumn (name="RANGE_ID")
-    @Column(name="VALUE")*/
-    @Transient
-    private Map<Long, MessageStatus> statusesForUsers;
+    @OneToMany(mappedBy = "message")
+    private List<MessageUser> messageUsers;
     @Transient
     private Folder folder;
     @Transient

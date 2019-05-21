@@ -24,35 +24,35 @@ public class MessageController {
     }
 
     @GetMapping(path = "/inbox")
-    public String inbox(){
+    public String inbox() {
         return "inbox";
     }
 
     @GetMapping(path = "/new")
-    public String newMail(){
+    public String newMail() {
         return "newMail";
     }
 
     @GetMapping(path = "/sent")
-    public String sentMails(){
+    public String sentMails() {
         return "sent";
     }
 
     @GetMapping(path = "/all")
-    public String allMail(){
+    public String allMail() {
         return "archieved";
     }
 
     @GetMapping(path = "/search-options")
-    public String searchOptionsPage(){
+    public String searchOptionsPage() {
         return "searchOptions";
     }
 
     @PostMapping(path = "/new")
-    public String sendMail(Authentication authentication, NewMailForm form, ModelMap modelMap){
-        User sender = ((MailUserDetails)authentication.getPrincipal()).getUser();
+    public String sendMail(Authentication authentication, NewMailForm form, ModelMap modelMap) {
+        User sender = ((MailUserDetails) authentication.getPrincipal()).getUser();
         MessageDto mail = messagelService.save(form, sender);
         modelMap.put("mail", mail);
-        return "redirect:/mail/"+mail.getId();
+        return "redirect:/mail/" + mail.getId();
     }
 }
