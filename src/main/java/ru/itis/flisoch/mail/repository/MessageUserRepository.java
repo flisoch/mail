@@ -10,4 +10,5 @@ public interface MessageUserRepository extends JpaRepository<MessageUser, Long> 
     List<MessageUser> findAllByRecipientAndId(User user, Long id);
 
     List<MessageUser> findAllByIdAndRecipient(Iterable<Long> ids, User user);
+    List<MessageUser> findAllByMessage_IdAndRecipient(Iterable<Long> ids, User user);
 }

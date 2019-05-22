@@ -79,7 +79,7 @@ public class MessagelServiceImpl implements MessagelService {
         User user = userRepository.findByUsername(authUser.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
         List<MessageUser> messageUsers = messageUserRepository
-                .findAllByIdAndRecipient(Arrays.asList(messagesAndAction.getMessagesId()), user);
+                .findAllByMessage_IdAndRecipient(Arrays.asList(messagesAndAction.getMessagesId()), user);
 
         if (messagesAndAction.getAction().equals(MessageAction.ARCHIVE)) {
             archive(user, messageUsers, messagesAndAction.getFolderFrom());
