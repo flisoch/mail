@@ -31,6 +31,11 @@ public class MessageUser {
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
 
-    @ManyToMany(mappedBy = "messages")
+    @ManyToMany
+    @JoinTable(
+            name = "message_user_folder",
+            joinColumns = @JoinColumn(name = "message_user_id"),
+            inverseJoinColumns = @JoinColumn(name = "folder_id")
+    )
     private List<Folder> folders;
 }

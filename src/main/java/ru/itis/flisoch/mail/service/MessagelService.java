@@ -13,4 +13,6 @@ public interface MessagelService {
     List<MessageDto> folderMessages(User user, String name);
 
     void handleMail(User user, MessagesAndActions messagesAndActions);
+
+    void deleteMessages(User user, Long[] messagesId);
 }

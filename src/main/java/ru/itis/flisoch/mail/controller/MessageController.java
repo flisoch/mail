@@ -42,7 +42,10 @@ public class MessageController {
     }
 
     @GetMapping(path = "/new")
-    public String newMail() {
+    public String newMail(Authentication authentication, ModelMap modelMap) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        List<FolderDto> folders = folderService.foldersByUser(user);
+        modelMap.put("folders", folders);
         return "newMail";
     }
 
@@ -74,6 +77,15 @@ public class MessageController {
                               @RequestBody MessagesAndActions messagesAndActions) {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
         messagelService.handleMail(user, messagesAndActions);
+        return ResponseEntity.status(200).build();
+    }
+
+    @DeleteMapping
+    public @ResponseBody
+    ResponseEntity deleteMail(Authentication authentication,
+                              @RequestBody MessagesAndActions messagesAndActions) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        messagelService.deleteMessages(user, messagesAndActions.getMessagesId());
         return ResponseEntity.status(200).build();
     }
 }

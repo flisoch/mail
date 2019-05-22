@@ -109,7 +109,8 @@ public class MessagelServiceImpl implements MessagelService {
 
         Arrays.asList(messagesAndActions.getActions()).forEach(
                 action -> {
-                    if (action.equals(MessageAction.MARKREAD) || action.equals(MessageAction.MARKUNREAD)) {
+                    if (action.equals(MessageAction.MARKREAD) || action.equals(MessageAction.MARKUNREAD)
+                            || action.equals(MessageAction.DELETE)) {
                         MessageStatus messageStatus = statusByAction(action);
                         setNewStatuses(messageUsers, messageStatus);
                     }
@@ -122,6 +123,25 @@ public class MessagelServiceImpl implements MessagelService {
                     }
                 }
         );
+    }
+
+    @Override
+    @Transactional
+    public void deleteMessages(User authUser, Long[] messagesId) {
+        User user = userRepository.findByUsername(authUser.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        List<MessageUser> messageUsers = messageUserRepository
+                .findByRecipientAndMessage_IdIn(user, Arrays.asList(messagesId));
+        messageUsers.forEach(
+                messageUser -> {
+                    messageUser.getFolders().stream()
+                            .filter(folder ->
+                                    folder.getName().equals(DefaultFolderNames.BIN.name()))
+                            .findAny()
+                            .ifPresent(folder -> folder.getMessages().remove(messageUser));
+
+                });
+
     }
 
     @Transactional

@@ -20,8 +20,11 @@
                     <table width=100% cellpadding=2 cellspacing=0 border=0 bgcolor="#C3D9FF">
                         <tr>
                             <td>
-                                <input type="button" onclick="deleteMessages('INBOX', 'DELETE');event.stopPropagation();"
+
+                                <input type="button"
+                                       onclick="deleteMessages('${currentFolder}');"
                                        name="nvp_a_tr" value="Delete">&nbsp;&nbsp;
+
 
                                 <select id="copy-select" name=tact>
                                     <option value="">Copy To...</option>
@@ -86,6 +89,7 @@
                                         </#if>
                                         <font color=#7777CC>
                                             ${message.text}
+                                            ${message}
                                         </font>
                                     </span>
                                             </a>
@@ -104,7 +108,8 @@
                     <table width=100% cellpadding=2 cellspacing=0 border=0 bgcolor="#C3D9FF">
                         <tr>
                             <td>
-                                <input type="button" onclick="deleteMessages('INBOX', 'DELETE');event.stopPropagation();"
+                                <input type="button"
+                                       onclick="deleteMessages('${currentFolder}');"
                                        name="nvp_a_tr" value="Delete">&nbsp;&nbsp;
 
                                 <select id="copy-select-bottom" name=tact>
