@@ -30,9 +30,9 @@ public class MessageDto {
         List<UserDto> to = new ArrayList<>();
         message.getMessageUsers()
                 .forEach(messageUser -> {
-                            if (messageUser.getReceiptType().equals(ReceiptType.CC)) {
+                            if (messageUser.isCc()) {
                                 cc.add(UserDto.from(messageUser.getRecipient()));
-                            } else if (messageUser.getReceiptType().equals(ReceiptType.NORM)) {
+                            } else if (messageUser.isNorm()) {
                                 to.add(UserDto.from(messageUser.getRecipient()));
                             }
                         }

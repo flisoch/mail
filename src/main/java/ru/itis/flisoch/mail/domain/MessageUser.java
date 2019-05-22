@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity(name = "message_user")
+@EqualsAndHashCode(of = {"recipient", "message", "cc", "bcc", "norm"})
 public class MessageUser {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,8 +22,12 @@ public class MessageUser {
     @ManyToOne
     @JoinColumn(name = "recipient_id")
     private User recipient;
-    @Enumerated(EnumType.STRING)
+//    @Enumerated(EnumType.STRING)
+    @Transient
     private ReceiptType receiptType;
+    private boolean cc;
+    private boolean bcc;
+    private boolean norm;
     @Enumerated(EnumType.STRING)
     private MessageStatus status;
 

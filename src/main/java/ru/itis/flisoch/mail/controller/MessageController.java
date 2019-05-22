@@ -45,7 +45,10 @@ public class MessageController {
     }
 
     @GetMapping(path = "/all")
-    public String allMail() {
+    public String allMail(Authentication authentication, ModelMap modelMap) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        List<MessageDto> allMessages = messagelService.folderMessages(user, DefaultFolderNames.ALL.name());
+        modelMap.put("messages", allMessages);
         return "archieved";
     }
 

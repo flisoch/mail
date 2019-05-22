@@ -50,7 +50,6 @@ public class MessagelServiceImpl implements MessagelService {
             message.setParentMessage(parent);
         }
         message = messageRepository.save(message);
-
         addUsersToMessage(message, form);
 
         return MessageDto.from(message);
@@ -84,11 +83,9 @@ public class MessagelServiceImpl implements MessagelService {
 
         if (messagesAndAction.getAction().equals(MessageAction.ARCHIVE)) {
             archive(user, messageUsers, messagesAndAction.getFolderFrom());
-        }
-        else if(messagesAndAction.getAction().equals(MessageAction.MOVETOFOLDER)){
+        } else if (messagesAndAction.getAction().equals(MessageAction.MOVETOFOLDER)) {
             moveToFolder(user, messageUsers, messagesAndAction.getFolderFrom(), messagesAndAction.getFolderTo());
-        }
-        else {
+        } else {
             MessageStatus messageStatus = statusByAction(messagesAndAction.getAction());
             setNewStatuses(messageUsers, messageStatus);
         }
@@ -97,7 +94,10 @@ public class MessagelServiceImpl implements MessagelService {
 
     @Transactional
     public void setNewStatuses(List<MessageUser> messageUsers, MessageStatus messageStatus) {
-        messageUsers.forEach(messageUser -> messageUser.setStatus(messageStatus));
+        messageUsers.forEach(messageUser -> {
+            messageUser.setStatus(messageStatus);
+            messageUserRepository.save(messageUser);
+        });
     }
 
     @Transactional
@@ -158,18 +158,47 @@ public class MessagelServiceImpl implements MessagelService {
         recipients.forEach(user -> messageUsers.add(userInfoToMessage(user, message, ReceiptType.NORM)));
         copyRecipients.forEach(user -> messageUsers.add(userInfoToMessage(user, message, ReceiptType.CC)));
         hiddenCopyRecipients.forEach(user -> messageUsers.add(userInfoToMessage(user, message, ReceiptType.BCC)));
+        messageUsers.stream()
+                .peek(messageUser -> setOtherReceiptTypes(messageUser, messageUsers)) //yoy can set them on prev step
+                .distinct()
+                .forEach(mUser -> {
+                            mUser = messageUserRepository.save(mUser);
+                            putMessageToFolders(mUser);
+                        }
+                );
+
         message.setMessageUsers(messageUsers);
     }
 
-    private MessageUser userInfoToMessage(User user, Message finalMessage, ReceiptType type) {
-        MessageUser messageUser = messageUserRepository.save(
-                MessageUser.builder()
-                        .recipient(user)
-                        .receiptType(type)
-                        .status(MessageStatus.RECEIVED)
-                        .message(finalMessage).build()
+    private void setOtherReceiptTypes(MessageUser messageUser, List<MessageUser> messageUsers) {
+        messageUsers.forEach(m -> {
+                    if (m.getRecipient().equals(messageUser.getRecipient())) {
+                        messageUser.setCc(messageUser.isCc() || m.isCc());
+                        messageUser.setBcc(messageUser.isBcc() || m.isBcc());
+                        messageUser.setNorm(messageUser.isNorm() || m.isNorm());
+                    }
+                }
         );
-        putMessageToFolders(messageUser);
+    }
+
+    private MessageUser userInfoToMessage(User user, Message finalMessage, ReceiptType type) {
+        MessageUser messageUser = MessageUser.builder()
+                .recipient(user)
+                .status(MessageStatus.RECEIVED)
+                .message(finalMessage)
+                .build();
+
+        switch (type) {
+            case CC:
+                messageUser.setCc(true);
+                break;
+            case NORM:
+                messageUser.setNorm(true);
+                break;
+            case BCC:
+                messageUser.setBcc(true);
+                break;
+        }
         return messageUser;
     }
 
