@@ -31,7 +31,7 @@
                                     <option value=MARKUNREAD>Mark as unread</option>
                                 </select>&nbsp;
                                 <input type=button onclick="handleMail('INBOX', null);event.stopPropagation();"
-                                    value="Go">
+                                       value="Go">
                                 <a href="?&amp;" class="searchPageLink">Refresh</a>
                             </td>
                             <td align=right><b>1</b>&nbsp;-&nbsp;<b>10</b> of about <b>17</b> &nbsp;
@@ -39,22 +39,27 @@
                                     <b>Older &#8250;</b>
                                 </a>
                     </table>
-                    <table id="messages" width=100% cellpadding=2 cellspacing=0 border=0 bgcolor=#e8eef7 class=th>
-                        <#if messages??>
-                            <#list messages as message>
 
-                                <tr id="message_${message.id}"
-                                    <#if message.status="READ">bgcolor="#ffffff"</#if>
-                                        <#if message.status="RECEIVED">bgcolor="#E8EEF7"</#if>
-                                >
-                                    <td width=1% nowrap>
-                                        <input type=checkbox name=t value="${message.id}">
-                                        <img src="https://ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif"
-                                             width=15 height=15 border=0 alt="">
-                                    </td>
-                                    <td width=25%> ${message.sender} (4)</td>
-                                    <td width=73%>
-                                        <a href="?&amp;th=16ad184b480a8233&amp;v=c">
+                    <table id="messages" width=100% cellpadding=2 cellspacing=0 border=0 bgcolor=#e8eef7
+                           class=th>
+                        <#if messages??>
+                            <#if messages?has_content>
+
+
+                                <#list messages as message>
+
+                                    <tr id="message_${message.id}"
+                                        <#if message.status="READ">bgcolor="#ffffff"</#if>
+                                            <#if message.status="RECEIVED">bgcolor="#E8EEF7"</#if>
+                                    >
+                                        <td width=1% nowrap>
+                                            <input type=checkbox name=t value="${message.id}">
+                                            <img src="https://ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif"
+                                                 width=15 height=15 border=0 alt="">
+                                        </td>
+                                        <td width=25%> ${message.sender} (4)</td>
+                                        <td width=73%>
+                                            <a href="?&amp;th=16ad184b480a8233&amp;v=c">
                                     <span class=ts>
                                         <#if message.subject??>
                                             <font size=1><font color=#006633></font></font> ${message.subject}
@@ -65,13 +70,18 @@
                                             ${message.text}
                                         </font>
                                     </span>
-                                        </a>
-                                    </td>
-                                    <td width=1% nowrap> ${message.sendTime}
-                                </tr>
-                            </#list>
+                                            </a>
+                                        </td>
+                                        <td width=1% nowrap> ${message.sendTime}
+                                    </tr>
+                                </#list>
+                            </#if>
+
                         </#if>
                     </table>
+                    <script>
+                        fillSpace();
+                    </script>
 
                     <table width=100% cellpadding=2 cellspacing=0 border=0 bgcolor="#C3D9FF">
                         <tr>

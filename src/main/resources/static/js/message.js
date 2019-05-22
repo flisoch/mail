@@ -47,7 +47,23 @@ const handleMail = (folderFrom, action) => {
                         message[0].bgColor = '#E8EEF7';
                     }
                 }
+                if($('#table-filler').length != 0) {
+                    $('#table-filler').empty();
+                    fillSpace();
+                }
 
             }
         );
 };
+
+const fillSpace = () => {
+    let messages = $('#messages');
+    if(messages.height() < 125) {
+        let height = 125 - messages.height();
+        messages.append(`
+                                            <tr id="table-filler">
+                                                <td colspan=4
+                                                 bgcolor=#ffffff>&nbsp;`);
+        $('#messages :last').height(height);
+    }
+}
