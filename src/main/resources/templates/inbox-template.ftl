@@ -2,7 +2,7 @@
 
 
 <#macro title>
-    Inbox
+    ${currentFolder}
 </#macro>
 
 
@@ -20,17 +20,35 @@
                     <table width=100% cellpadding=2 cellspacing=0 border=0 bgcolor="#C3D9FF">
                         <tr>
                             <td>
-                                <input type="button"
-                                       onclick="handleMail('INBOX', 'ARCHIVE');event.stopPropagation();"
-                                       value="Archive">
-                                <input type="button" onclick="handleMail('INBOX', 'DELETE');event.stopPropagation();"
+                                <input type="button" onclick="deleteMessages('INBOX', 'DELETE');event.stopPropagation();"
                                        name="nvp_a_tr" value="Delete">&nbsp;&nbsp;
-                                <select name=tact>
+
+                                <select id="copy-select" name=tact>
+                                    <option value="">Copy To...</option>
+                                    <#if folders??>
+                                        <#list folders as folder>
+                                            <option value="${folder.name}">${folder.name}</option>
+                                        </#list>
+                                    </#if>
+                                </select>
+
+                                <select id="move-select" name=tact>
+                                    <option value="">Move To...</option>
+
+                                    <#if folders??>
+                                        <#list folders as folder>
+                                            <option value="${folder.name}">${folder.name}</option>
+                                        </#list>
+                                    </#if>
+                                </select>
+
+                                <select id="more-select" name=tact>
                                     <option value="">More Actions...</option>
-                                    <option value=MARKREAD>Mark as read</option>
-                                    <option value=MARKUNREAD>Mark as unread</option>
+                                    <option value="MARKREAD">Mark as read</option>
+                                    <option value="MARKUNREAD">Mark as unread</option>
                                 </select>&nbsp;
-                                <input type=button onclick="handleMail('INBOX', null);event.stopPropagation();"
+
+                                <input type=button onclick="handleMail('${currentFolder}')"
                                        value="Go">
                                 <a href="?&amp;" class="searchPageLink">Refresh</a>
                             </td>
@@ -57,7 +75,7 @@
                                             <img src="https://ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif"
                                                  width=15 height=15 border=0 alt="">
                                         </td>
-                                        <td width=25%> ${message.sender} (4)</td>
+                                        <td width=25%> ${message.sender.username} (4)</td>
                                         <td width=73%>
                                             <a href="?&amp;th=16ad184b480a8233&amp;v=c">
                                     <span class=ts>
@@ -86,17 +104,35 @@
                     <table width=100% cellpadding=2 cellspacing=0 border=0 bgcolor="#C3D9FF">
                         <tr>
                             <td>
-                                <input type="button"
-                                       onclick="handleMail('INBOX', 'ARCHIVE');event.stopPropagation();"
-                                       value="Archive">
-                                <input type="button" onclick="handleMail('INBOX', 'DELETE');event.stopPropagation();"
+                                <input type="button" onclick="deleteMessages('INBOX', 'DELETE');event.stopPropagation();"
                                        name="nvp_a_tr" value="Delete">&nbsp;&nbsp;
-                                <select name=tact>
+
+                                <select id="copy-select-bottom" name=tact>
+                                    <option value="">Copy To...</option>
+                                    <#if folders??>
+                                        <#list folders as folder>
+                                            <option value="${folder.name}">${folder.name}</option>
+                                        </#list>
+                                    </#if>
+                                </select>
+
+                                <select id="move-select-bottom" name=tact>
+                                    <option value="">Move To...</option>
+
+                                    <#if folders??>
+                                        <#list folders as folder>
+                                            <option value="${folder.name}">${folder.name}</option>
+                                        </#list>
+                                    </#if>
+                                </select>
+
+                                <select id="more-select-bottom" name=tact>
                                     <option value="">More Actions...</option>
-                                    <option value=MARKREAD>Mark as read</option>
-                                    <option value=MARKUNREAD>Mark as unread</option>
+                                    <option value="MARKREAD">Mark as read</option>
+                                    <option value="MARKUNREAD">Mark as unread</option>
                                 </select>&nbsp;
-                                <input type=button onclick="handleMail('INBOX', null);event.stopPropagation();"
+
+                                <input type=button onclick="handleMailBottom('${currentFolder}')"
                                        value="Go">
                                 <a href="?&amp;" class="searchPageLink">Refresh</a>
                             </td>
@@ -105,6 +141,7 @@
                                     <b>Older &#8250;</b>
                                 </a>
                     </table>
+
         </tr>
         </form></table>
 </#macro>

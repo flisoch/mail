@@ -4,11 +4,11 @@
                 <tr>
                     <td bgcolor="#C3D9FF"><a href="/mail/new">Compose Mail</a>
                 <tr>
-                    <td><a href="/mail/inbox" accesskey=i>Inbox&nbsp;</a>
+                    <td><a href="/mail/INBOX" accesskey=i>Inbox&nbsp;</a>
                 <tr>
                     <td><a href="/mail/sent">Sent</a>
                 <tr>
-                    <td><a href="/mail/all">All Mail</a>
+                    <td><a href="/mail/ALL">All Mail</a>
 
             </table>
         </td>

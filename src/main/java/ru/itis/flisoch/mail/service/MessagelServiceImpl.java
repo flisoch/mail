@@ -8,7 +8,7 @@ import ru.itis.flisoch.mail.domain.*;
 import ru.itis.flisoch.mail.dto.MessageDto;
 import ru.itis.flisoch.mail.exception.LogicalException;
 import ru.itis.flisoch.mail.exception.ResourceNotFoundException;
-import ru.itis.flisoch.mail.form.MessagesAndAction;
+import ru.itis.flisoch.mail.form.MessagesAndActions;
 import ru.itis.flisoch.mail.form.NewMailForm;
 import ru.itis.flisoch.mail.repository.FolderRepository;
 import ru.itis.flisoch.mail.repository.MessageRepository;
@@ -101,33 +101,56 @@ public class MessagelServiceImpl implements MessagelService {
 
     @Override
     @Transactional
-    public void handleMail(User authUser, MessagesAndAction messagesAndAction) {
+    public void handleMail(User authUser, MessagesAndActions messagesAndActions) {
         User user = userRepository.findByUsername(authUser.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
         List<MessageUser> messageUsers = messageUserRepository
-                .findAllByMessage_IdAndRecipient(Arrays.asList(messagesAndAction.getMessagesId()), user);
+                .findByRecipientAndMessage_IdIn(user, Arrays.asList(messagesAndActions.getMessagesId()));
 
-        if (messagesAndAction.getAction().equals(MessageAction.ARCHIVE)) {
-            archive(user, messageUsers, messagesAndAction.getFolderFrom());
-        } else if (messagesAndAction.getAction().equals(MessageAction.MOVETOFOLDER)) {
-            moveToFolder(user, messageUsers, messagesAndAction.getFolderFrom(), messagesAndAction.getFolderTo());
-        } else {
-            MessageStatus messageStatus = statusByAction(messagesAndAction.getAction());
-            setNewStatuses(messageUsers, messageStatus);
-        }
+        Arrays.asList(messagesAndActions.getActions()).forEach(
+                action -> {
+                    if (action.equals(MessageAction.MARKREAD) || action.equals(MessageAction.MARKUNREAD)) {
+                        MessageStatus messageStatus = statusByAction(action);
+                        setNewStatuses(messageUsers, messageStatus);
+                    }
+                    if (action.equals(MessageAction.MOVETOFOLDER)) {
+                        moveToFolder(user, messageUsers, messagesAndActions.getFolderFrom(), messagesAndActions.getMoveTo());
+                    }
+                    if (action.equals(MessageAction.COPYTOFOLDER)) {
+                        copyToFolder(user, messageUsers, messagesAndActions.getFolderFrom(), messagesAndActions.getCopyTo());
 
+                    }
+                }
+        );
     }
 
     @Transactional
-    public void setNewStatuses(List<MessageUser> messageUsers, MessageStatus messageStatus) {
-        messageUsers.forEach(messageUser -> {
-            messageUser.setStatus(messageStatus);
-            messageUserRepository.save(messageUser);
-        });
+    public void copyToFolder(User user, List<MessageUser> messageUsers, String folderFrom, String copyTo) {
+        if (folderFrom.equals(copyTo)) {
+            return;
+        }
+
+        messageUsers.forEach(
+                messageUser -> {
+                    if (messageUser.getStatus().equals(MessageStatus.SENT)) {
+                        return;
+                    }
+                    Folder to = user.getFolders().stream()
+                            .filter(folder ->
+                                    folder.getName().equals(copyTo))
+                            .findAny()
+                            .orElseThrow(() -> new ResourceNotFoundException("folder" + " not found"));
+                    to.getMessages().add(messageUser);
+                    folderRepository.save(to);
+                }
+        );
     }
 
     @Transactional
     public void moveToFolder(User user, List<MessageUser> messageUsers, String folderFrom, String folderTo) {
+        if (folderFrom.equals(folderTo)) {
+            return;
+        }
         messageUsers.forEach(
                 messageUser -> {
                     Folder from = user.getFolders().stream()
@@ -150,18 +173,14 @@ public class MessagelServiceImpl implements MessagelService {
     }
 
     @Transactional
-    public void archive(User user, List<MessageUser> messageUsers, String folderName) {
-        messageUsers.forEach(
-                messageUser -> {
-                    Folder f = user.getFolders().stream()
-                            .filter(folder ->
-                                    folder.getName().equals(folderName))
-                            .findAny()
-                            .orElseThrow(() -> new ResourceNotFoundException("folder" + " not found"));
-                    f.getMessages().remove(messageUser);
-                    folderRepository.save(f);
-                }
-        );
+    public void setNewStatuses(List<MessageUser> messageUsers, MessageStatus messageStatus) {
+        messageUsers.forEach(messageUser -> {
+            if (messageUser.getStatus().equals(MessageStatus.SENT) && !messageStatus.equals(MessageStatus.DELETED)) {
+                return;
+            }
+            messageUser.setStatus(messageStatus);
+            messageUserRepository.save(messageUser);
+        });
     }
 
     private MessageStatus statusByAction(MessageAction action) {

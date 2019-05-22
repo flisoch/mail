@@ -1,6 +1,7 @@
 package ru.itis.flisoch.mail.dto;
 
 import lombok.*;
+import ru.itis.flisoch.mail.domain.Folder;
 import ru.itis.flisoch.mail.domain.Message;
 import ru.itis.flisoch.mail.domain.MessageStatus;
 import ru.itis.flisoch.mail.domain.ReceiptType;
