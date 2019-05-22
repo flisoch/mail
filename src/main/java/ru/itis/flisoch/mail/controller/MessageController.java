@@ -40,7 +40,9 @@ public class MessageController {
     }
 
     @GetMapping(path = "/sent")
-    public String sentMails() {
+    public String sentMails(Authentication authentication, ModelMap modelMap) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        List<MessageDto> sentMessages = messagelService.folderMessages(user,DefaultFolderNames.SENT.name());
         return "sent";
     }
 

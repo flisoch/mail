@@ -39,7 +39,10 @@ public class MessagelServiceImpl implements MessagelService {
 
     @Override
     @Transactional
-    public MessageDto save(NewMailForm form, User sender) {
+    public MessageDto save(NewMailForm form, User authSender) {
+        User sender = userRepository.findByUsername(authSender.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("user with name"
+                        + authSender.getUsername() + " not found"));
         Message message = Message.from(form);
         message.setSender(sender);
         message.setSendTime(LocalDateTime.now());
@@ -51,8 +54,28 @@ public class MessagelServiceImpl implements MessagelService {
         }
         message = messageRepository.save(message);
         addUsersToMessage(message, form);
+        addSenderToMessageUser(message, sender); //you can combine it with prev method
 
         return MessageDto.from(message);
+    }
+
+    @Transactional
+    public void addSenderToMessageUser(Message message, User sender) {
+        MessageUser messageUser = MessageUser.builder()
+                .message(message)
+                .recipient(sender)
+                .status(MessageStatus.SENT)
+                .build();
+        messageUser = messageUserRepository.save(messageUser);
+        addToSentFolder(sender, messageUser);
+    }
+
+    @Transactional
+    public void addToSentFolder(User sender, MessageUser messageUser) {
+        Folder sent = sender.getFolders().stream().filter(folder -> folder.getName().equals(DefaultFolderNames.SENT.name()))
+                .findAny().orElseThrow(() -> new ResourceNotFoundException("folder SENT not found"));
+        sent.getMessages().add(messageUser);
+        folderRepository.save(sent);
     }
 
     @Override
@@ -181,11 +204,11 @@ public class MessagelServiceImpl implements MessagelService {
         );
     }
 
-    private MessageUser userInfoToMessage(User user, Message finalMessage, ReceiptType type) {
+    private MessageUser userInfoToMessage(User user, Message message, ReceiptType type) {
         MessageUser messageUser = MessageUser.builder()
                 .recipient(user)
                 .status(MessageStatus.RECEIVED)
-                .message(finalMessage)
+                .message(message)
                 .build();
 
         switch (type) {
