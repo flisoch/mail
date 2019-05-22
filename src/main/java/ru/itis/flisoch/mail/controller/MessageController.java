@@ -51,7 +51,7 @@ public class MessageController {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
         List<MessageDto> allMessages = messagelService.folderMessages(user, DefaultFolderNames.ALL.name());
         modelMap.put("messages", allMessages);
-        return "archieved";
+        return "inbox";
     }
 
     @GetMapping(path = "/search-options")

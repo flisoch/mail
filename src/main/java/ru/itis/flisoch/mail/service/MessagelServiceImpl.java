@@ -90,6 +90,9 @@ public class MessagelServiceImpl implements MessagelService {
                 .map(messageUser -> {
                     MessageDto dto = MessageDto.from(messageUser.getMessage());
                     dto.setStatus(messageUser.getStatus());
+                    if (!dto.getStatus().equals(MessageStatus.SENT)) {
+                        dto.setBcc(new ArrayList<>());
+                    }
                     return dto;
                 })
                 .distinct()
