@@ -34,18 +34,13 @@ public class MessageController {
     public String inbox(Authentication authentication, ModelMap modelMap, @PathVariable String folderName) {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
         List<MessageDto> inboxMessages = messagelService.folderMessages(user, folderName);
-        List<FolderDto> folders = folderService.foldersByUser(user);
         modelMap.put("messages", inboxMessages);
-        modelMap.put("folders", folders);
         modelMap.put("currentFolder", folderName);
         return "inbox-template";
     }
 
     @GetMapping(path = "/new")
     public String newMail(Authentication authentication, ModelMap modelMap) {
-        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
-        List<FolderDto> folders = folderService.foldersByUser(user);
-        modelMap.put("folders", folders);
         return "newMail";
     }
 
