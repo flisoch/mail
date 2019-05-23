@@ -5,9 +5,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import ru.itis.flisoch.mail.domain.User;
-import ru.itis.flisoch.mail.dto.FilterDto;
+import ru.itis.flisoch.mail.dto.FilterShortDto;
+import ru.itis.flisoch.mail.form.FilterForm;
 import ru.itis.flisoch.mail.security.MailUserDetails;
 import ru.itis.flisoch.mail.service.FilterService;
 
@@ -27,12 +30,19 @@ public class SettingsController {
     @GetMapping("/filters")
     public String myFilters(Authentication authentication, ModelMap modelMap) {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
-        List<FilterDto> filters = filterService.getFilters(user);
+        List<FilterShortDto> filters = filterService.getFilters(user);
         modelMap.put("filters", filters);
         return "filters/filters";
     }
     @GetMapping("/filters/new")
     public String newFilterPage(Authentication authentication, ModelMap modelMap) {
         return "filters/new";
+    }
+
+    @PostMapping("/filters")
+    public String newFilter(Authentication authentication, @RequestBody FilterForm filterForm) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        FilterShortDto filter = filterService.createFilter(user, filterForm);
+        return "filters/filters";
     }
 }

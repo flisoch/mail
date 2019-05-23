@@ -6,7 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Data
 @Builder
@@ -17,26 +16,19 @@ public class Filter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
-    @JoinColumn(name = "from_id")
-    private User from;
-    @ManyToOne
-    @JoinColumn(name = "to_id")
-    private User to;
+    private String fromUser;
+    private String toUser;
     private String subject;
+    private String containingWords;
 
-    @ElementCollection(targetClass = String.class)
-    @JoinTable(name = "filter_word", joinColumns = @JoinColumn(name = "filter_id"))
-    @Column(name = "word", nullable = false)
-    private List<String> containingWords;
-
-    @ElementCollection(targetClass = MessageAction.class)
-    @JoinTable(name = "filter_action", joinColumns = @JoinColumn(name = "filter_id"))
-    @Column(name = "action", nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "move_folder_id")
+    private Folder moveTo;
+    @ManyToOne
+    @JoinColumn(name = "copy_folder_id")
+    private Folder copyTo;
     @Enumerated(EnumType.STRING)
-    private List<MessageAction> messageActions;
-
-
+    private MessageAction markAs;
 
     @ManyToOne
     @JoinColumn(name = "owner_id")

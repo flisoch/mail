@@ -105,6 +105,9 @@
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" defer></script>
         <script src="/static/js/message.js"></script>
+        <script src="/static/js/filters.js"></script>
+        <script src="/static/js/folders.js"></script>
+        <script src="/static/js/contacts.js"></script>
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
 
