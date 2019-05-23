@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.transaction.annotation.Transactional;
+import ru.itis.flisoch.mail.exception.LogicalException;
 
 import javax.persistence.*;
 

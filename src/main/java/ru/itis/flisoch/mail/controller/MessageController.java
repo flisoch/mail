@@ -40,7 +40,7 @@ public class MessageController {
     }
 
     @GetMapping(path = "/new")
-    public String newMail(Authentication authentication, ModelMap modelMap) {
+    public String newMail(Authentication authentication, ModelMap modelMap, String qwe) {
         return "newMail";
     }
 

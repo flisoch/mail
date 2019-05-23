@@ -43,6 +43,6 @@ public class SettingsController {
     public String newFilter(Authentication authentication, @RequestBody FilterForm filterForm) {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
         FilterShortDto filter = filterService.createFilter(user, filterForm);
-        return "filters/filters";
+        return "redirect:/settings/filters";
     }
 }

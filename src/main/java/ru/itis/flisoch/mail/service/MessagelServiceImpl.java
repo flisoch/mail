@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Service
@@ -232,10 +233,80 @@ public class MessagelServiceImpl implements MessagelService {
                 .forEach(mUser -> {
                             mUser = messageUserRepository.save(mUser);
                             putMessageToFolders(mUser);
+                            filter(mUser.getRecipient().getFilters(), mUser);
                         }
                 );
 
         message.setMessageUsers(messageUsers);
+    }
+
+    @Transactional
+    public void filter(List<Filter> filters, MessageUser mUser) {
+        filters.forEach(filter -> {
+            doFilter(mUser, filter);
+        });
+    }
+
+    @Transactional
+    public void doFilter(MessageUser mUser, Filter filter) {
+        String text = mUser.getMessage().getText();
+        String subject = mUser.getMessage().getSubject();
+        User sender = mUser.getMessage().getSender();
+        User recipient = mUser.getRecipient();
+
+        boolean needFiltration = true;
+        if (filter.getFromUser() != null && !filter.getFromUser().equals(sender.getUsername())) {
+            needFiltration = false;
+        }
+        if (filter.getToUser() != null && !filter.getToUser().equals(sender.getUsername())) {
+            needFiltration = false;
+        }
+        if (filter.getSubject() != null && !subject.contains(filter.getSubject())) {
+            needFiltration = false;
+        }
+        if (filter.getContainingWords() != null && !text.contains(filter.getContainingWords())) {
+            needFiltration = false;
+        }
+        if (needFiltration) {
+
+            if (filter.getMoveTo() != null) {
+                Folder inbox = folderRepository.findByNameAndOwner(
+                        DefaultFolderNames.INBOX.name(), mUser.getRecipient())
+                        .orElseThrow(() -> new LogicalException("user doesn't have folder " + DefaultFolderNames.INBOX.name()));
+                Folder all = folderRepository.findByNameAndOwner(
+                        DefaultFolderNames.ALL.name(), mUser.getRecipient())
+                        .orElseThrow(() -> new LogicalException("user" + mUser.getRecipient().getUsername() +
+                                "doesn't have folder " + DefaultFolderNames.ALL.name()));
+                Folder moveTo = filter.getMoveTo();
+                if (!moveTo.getMessages().contains(mUser)) {
+                    inbox.getMessages().remove(mUser);
+                    all.getMessages().remove(mUser);
+                    inbox = folderRepository.save(inbox);
+                    all = folderRepository.save(all);
+                    moveTo.getMessages().add(mUser);
+                    folderRepository.save(moveTo);
+                }
+            }
+            if (filter.getCopyTo() != null) {
+                Folder copyTo = filter.getCopyTo();
+                if (!copyTo.getMessages().contains(mUser)) {
+                    copyTo.getMessages().add(mUser);
+                    folderRepository.save(copyTo);
+                }
+
+            }
+            if (filter.getMarkAs() != null) {
+                if (filter.getMarkAs().equals(MessageAction.MARKREAD)
+                        && !mUser.getStatus().equals(MessageStatus.READ)) {
+                    mUser.setStatus(MessageStatus.READ);
+                }
+                else if (filter.getMarkAs().equals(MessageAction.MARKUNREAD)
+                        && !mUser.getStatus().equals(MessageStatus.RECEIVED)) {
+                    mUser.setStatus(MessageStatus.RECEIVED);
+                }
+            }
+            messageUserRepository.save(mUser);
+        }
     }
 
     private void setOtherReceiptTypes(MessageUser messageUser, List<MessageUser> messageUsers) {

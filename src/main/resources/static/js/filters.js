@@ -41,6 +41,7 @@ const newFilter = () => {
         }),
     })
         .then(response => {
+            window.location = 'http://localhost:8080/settings/filters'
             }
         );
 };

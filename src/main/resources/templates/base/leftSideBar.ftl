@@ -3,6 +3,7 @@
         <table width=100% cellpadding=2 cellspacing=0 border=0 class=m>
             <tr>
                 <td><a href="/mail/new">Compose Mail</a>
+                    <#if folders??>
                     <#list folders as folder>
             <tr>
                 <#if currentFolder?? && currentFolder == folder.name>
@@ -14,6 +15,8 @@
 
                     </#if>
                     </#list>
+                    </#if>
+
             <tr>
                 <td>
                     <form action="/folders" method=POST>

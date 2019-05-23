@@ -24,7 +24,7 @@ public class FillPagesAspect {
 
     @Around(value = "execution(* ru.itis.flisoch.mail.controller..*(..)) && args(authentication, modelMap, ..)",
             argNames = "pjp, authentication, modelMap")
-    public Object auth(ProceedingJoinPoint pjp, Authentication authentication, ModelMap modelMap) throws Throwable {
+    public Object fill(ProceedingJoinPoint pjp, Authentication authentication, ModelMap modelMap) throws Throwable {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
         List<FolderDto> folders = folderService.foldersByUser(user);
         modelMap.put("user", UserDto.from(user));

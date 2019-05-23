@@ -35,7 +35,7 @@ public class User {
     private List<MyContact> contacts;
 
     @OneToMany(mappedBy = "owner")
-    private List<Filter> myFilters;
+    private List<Filter> filters;
 
 }
 

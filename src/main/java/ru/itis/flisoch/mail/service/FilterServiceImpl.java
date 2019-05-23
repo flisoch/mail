@@ -15,7 +15,6 @@ import ru.itis.flisoch.mail.repository.FolderRepository;
 import ru.itis.flisoch.mail.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +36,7 @@ public class FilterServiceImpl implements FilterService {
     public List<FilterShortDto> getFilters(User authUser) {
         User user = userRepository.findByUsername(authUser.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
-        return user.getMyFilters().stream().map(FilterShortDto::from).collect(Collectors.toList());
+        return user.getFilters().stream().map(FilterShortDto::from).collect(Collectors.toList());
 
     }
 
