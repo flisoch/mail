@@ -77,4 +77,15 @@ public class FilterServiceImpl implements FilterService {
 
         return FilterShortDto.from(filter);
     }
+
+    @Override
+    @Transactional
+    public void deleteFilter(User authUser, Long filterId) {
+        User user = userRepository.findByUsername(authUser.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("user" + authUser.getUsername() + "not found"));
+        Filter filter = filterRepository.findById(filterId).orElseThrow(() -> new ResourceNotFoundException("no filter with id " + filterId));
+        if (user.getFilters().contains(filter)) {
+            filterRepository.delete(filter);
+        }
+    }
 }

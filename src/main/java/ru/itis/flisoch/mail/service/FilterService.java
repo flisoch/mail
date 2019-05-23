@@ -11,4 +11,6 @@ public interface FilterService {
     List<FilterShortDto> getFilters(User user);
 
     FilterShortDto createFilter(User user, FilterForm filterForm);
+
+    void deleteFilter(User user, Long filterId);
 }

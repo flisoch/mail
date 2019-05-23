@@ -45,3 +45,21 @@ const newFilter = () => {
             }
         );
 };
+
+const deleteFilter = (filterId) => {
+    let filter = $(`#filter_${filterId}`);
+
+    if (confirm('delete filter?')) {
+        fetch(`/settings/filters/${filterId}`, {
+            method: 'DELETE',
+            headers: new Headers({
+                'Content-Type': 'application/json'
+            }),
+        })
+            .then(response => {
+                    filter.empty();
+                }
+            );
+    }
+
+};

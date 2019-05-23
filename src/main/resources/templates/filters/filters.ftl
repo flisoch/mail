@@ -38,18 +38,17 @@
 
                             <#if filters??>
                             <#list filters as filter>
-                        <tr>
+                        <tr id="filter_${filter.id}">
                             <td>
-                                <form action="" name=f enctype=multipart/form-data method=POST>
+                                <form action="/settings/filters/${filter.id}/edit">
 
                                     <div class="begin-container">Matches: <b>${filter.matches}</b>
                                         <b>${filter.words}</b>
                                         <br>Do this: ${filter.actions}<br>
                                     </div>
-                                    <div class="end-container-align-begin"><input name="nvp_bu_eftb"
-                                                                                  value="Edit"
-                                                                                  type="submit"> &nbsp;
-                                        <input name="nvp_bu_dftb" value="Delete" type="button">
+                                    <div class="end-container-align-begin">
+                                        <input value="Edit" type="submit">
+                                        <input onclick="deleteFilter(${filter.id})" value="Delete" type="button">
 
                                 </form>
 
