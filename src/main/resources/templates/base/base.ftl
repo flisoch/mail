@@ -1,6 +1,7 @@
 <#include "navbar.ftl">
 <#include "leftSideBar.ftl">
 <#macro title></#macro>
+<#macro import></#macro>
 <#macro imports>
 
     <meta http-equiv=Content-Type content="text/html; charset=UTF-8">
@@ -98,6 +99,7 @@
     <head>
 
         <@imports/>
+        <@import/>
         <title><@title></@title></title>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js" type="text/javascript"></script>
