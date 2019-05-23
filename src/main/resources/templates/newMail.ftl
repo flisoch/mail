@@ -40,7 +40,7 @@
                             <td align=right nowrap><b id=l-s>Subject:</b></td>
                             <td><input name=subject value="" type=text size=40 class=i
                                        aria-labelledby=l-s>
-                        <tr>
+                        <#--<tr>
                             <td align=right nowrap><img
                                         src="https://ssl.gstatic.com/ui/v1/icons/mail/images/paperclip.gif"
                                         width=15 height=15 border=0 alt="Attachment"></td>
@@ -50,7 +50,7 @@
                             <td><input name=file0 type=file size=42 aria-label="Attach File">
                         <tr>
                             <td>&nbsp;</td>
-                            <td><input type=submit name=nvp_bu_amf value="Attach More Files">
+                            <td><input type=submit name=nvp_bu_amf value="Attach More Files">-->
                         <tr>
                             <td>&nbsp;</td>
                             <td>
