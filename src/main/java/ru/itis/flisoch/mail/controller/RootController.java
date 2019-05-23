@@ -8,6 +8,6 @@ public class RootController {
 
     @GetMapping("/")
     public String redirectFromRoot() {
-        return "redirect:/mail/inbox";
+        return "redirect:/mail/INBOX";
     }
 }

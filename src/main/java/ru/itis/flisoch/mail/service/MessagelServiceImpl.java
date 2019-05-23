@@ -52,6 +52,9 @@ public class MessagelServiceImpl implements MessagelService {
                     .orElseThrow(() -> new ResourceNotFoundException("parent message with id " + parentId + "not found"));
             message.setParentMessage(parent);
         }
+        if (sender.getSignature() != null) {
+            message.setText(message.getText() + "\n\n" + sender.getSignature());
+        }
         message = messageRepository.save(message);
         addUsersToMessage(message, form);
         addSenderToMessageUser(message, sender); //you can combine it with prev method

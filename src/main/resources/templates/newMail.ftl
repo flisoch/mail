@@ -54,9 +54,7 @@
                         <tr>
                             <td>&nbsp;</td>
                             <td>
-                                <textarea name=text title="Message Body" rows=15 cols=50 wrap=virtual
-                                          class=mi aria-label="Message Body">
-                                </textarea>
+                                <textarea name=text title="Message Body" rows=15 cols=50 wrap=virtual class=mi aria-label="Message Body"></textarea>
                     </table>
                     <table width=100% cellpadding=2 cellspacing=0 border=0 bgcolor="#C3D9FF">
                         <tr>
