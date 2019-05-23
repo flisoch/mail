@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .formLogin().loginPage("/auth")
                 .usernameParameter("username")
-                .defaultSuccessUrl("/mail/inbox")
+                .defaultSuccessUrl("/mail/INBOX")
                 .failureUrl("/auth?error=invalid credentials")
                 .permitAll()
                 .and()
