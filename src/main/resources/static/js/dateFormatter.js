@@ -16,7 +16,7 @@ function formatDate(date) {
     }
 
     // форматировать дату, с учетом того, что месяцы начинаются с 0
-    var d = date;
+    var d = new Date(date);
     d = [
         '0' + d.getDate(),
         '0' + (d.getMonth() + 1),

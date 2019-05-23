@@ -72,7 +72,11 @@
                                     </span>
                                             </a>
                                         </td>
-                                        <td width=1% nowrap> ${message.sendTime}
+                                        <td id="send_time_${message.id}" width=1% nowrap> ${message.sendTime}
+                                            <script>
+                                                document.getElementById('send_time_${message.id}').innerText
+                                                    = formatDate(${message.sendTime?long?c});
+                                            </script>
                                     </tr>
                                 </#list>
                             </#if>

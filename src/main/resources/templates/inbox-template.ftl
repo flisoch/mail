@@ -97,7 +97,7 @@
                                         <td id="send_time_${message.id}" width=1% nowrap> ${message.sendTime}
                                             <script>
                                                 document.getElementById('send_time_${message.id}').innerText
-                                                    = formatDate(new Date(${message.sendTime}));
+                                                    = formatDate(${message.sendTime?long?c});
                                             </script>
                                     </tr>
                                 </#list>
