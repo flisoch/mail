@@ -10,10 +10,20 @@
                 <td bgcolor="#C3D9FF"><a href="/mail/${folder.name}">${folder.name}&nbsp;</a>
 
                     <#else>
-                    <td><a href="/mail/${folder.name}">${folder.name}&nbsp;</a>
+                <td><a href="/mail/${folder.name}">${folder.name}&nbsp;</a>
 
                     </#if>
                     </#list>
+            <tr>
+                <td>
+                    <form action="/folders" method=POST>
+                        <input id="new-folder" width="75%" size=14 maxlength=40 title="new folder"
+                               name="folderName" placeholder="new folder">
+                        <span><input type="submit" width="25%" value="Add"></span>
+
+                    </form>
+                </td>
+            </tr>
         </table>
     </td>
 
