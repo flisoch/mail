@@ -1,10 +1,11 @@
 package ru.itis.flisoch.mail.domain;
 
 import lombok.*;
-import ru.itis.flisoch.mail.form.RegistrationForm;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Builder
 @Data
@@ -20,8 +21,6 @@ public class User {
     private Long id;
     private String username;
     private String password;
-    @Transient
-    private List<User> contacts;
     @OneToMany(mappedBy = "sender")
     private List<Message> messages;
     private String signature;
@@ -31,4 +30,9 @@ public class User {
 
     @OneToMany(mappedBy = "owner")
     private List<Folder> folders;
+
+    @OneToMany(mappedBy = "me")
+    private List<MyContact> contacts;
+
 }
+

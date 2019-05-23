@@ -40,7 +40,7 @@ public class UserServiceImpl implements UserService {
         return UserDto.from(user);
     }
 
-    public void generateDefaultFolders(User user) {
+    private void generateDefaultFolders(User user) {
         Arrays.stream(DefaultFolderNames.values())
                 .forEach(
                         folderName ->
