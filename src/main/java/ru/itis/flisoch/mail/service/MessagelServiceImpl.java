@@ -10,10 +10,7 @@ import ru.itis.flisoch.mail.exception.LogicalException;
 import ru.itis.flisoch.mail.exception.ResourceNotFoundException;
 import ru.itis.flisoch.mail.form.MessagesAndActions;
 import ru.itis.flisoch.mail.form.NewMailForm;
-import ru.itis.flisoch.mail.repository.FolderRepository;
-import ru.itis.flisoch.mail.repository.MessageRepository;
-import ru.itis.flisoch.mail.repository.MessageUserRepository;
-import ru.itis.flisoch.mail.repository.UserRepository;
+import ru.itis.flisoch.mail.repository.*;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,13 +25,15 @@ public class MessagelServiceImpl implements MessagelService {
     private final UserRepository userRepository;
     private final MessageUserRepository messageUserRepository;
     private final FolderRepository folderRepository;
+    private final ContactRepository contactRepository;
 
     @Autowired
-    public MessagelServiceImpl(MessageRepository messageRepository, UserRepository userRepository, MessageUserRepository messageUserRepository, FolderRepository folderRepository) {
+    public MessagelServiceImpl(MessageRepository messageRepository, UserRepository userRepository, MessageUserRepository messageUserRepository, FolderRepository folderRepository, ContactRepository contactRepository) {
         this.messageRepository = messageRepository;
         this.userRepository = userRepository;
         this.messageUserRepository = messageUserRepository;
         this.folderRepository = folderRepository;
+        this.contactRepository = contactRepository;
     }
 
 
@@ -57,10 +56,32 @@ public class MessagelServiceImpl implements MessagelService {
             message.setText(message.getText() + "\n\n" + sender.getSignature());
         }
         message = messageRepository.save(message);
-        addUsersToMessage(message, form);
+        List<MessageUser> users = addUsersToMessage(message, form);
+        sender = addUsersToSenderContacts(users, sender);
         addSenderToMessageUser(message, sender); //you can combine it with prev method
-
         return MessageDto.from(message);
+    }
+
+
+    private User addUsersToSenderContacts(List<MessageUser> mUsers, User sender) {
+        List<MyContact> contacts = sender.getContacts();
+        mUsers.forEach(mUser -> {
+            AtomicBoolean inContacts = new AtomicBoolean(false);
+            contacts.forEach(contact -> {
+                if (contact.getMyContact().equals(mUser.getRecipient())){
+                    inContacts.set(true);
+                }
+            });
+            if (!inContacts.get()) {
+                MyContact myContact = new MyContact();
+                myContact.setMe(sender);
+                myContact.setMyContact(mUser.getRecipient());
+                myContact = contactRepository.save(myContact);
+                contacts.add(myContact);
+            }
+        });
+        sender.setContacts(contacts);
+        return userRepository.save(sender);
     }
 
     @Transactional
@@ -219,7 +240,7 @@ public class MessagelServiceImpl implements MessagelService {
         throw new LogicalException("doesn't support this action" + action.name());
     }
 
-    private void addUsersToMessage(Message message, NewMailForm form) {
+    private List<MessageUser> addUsersToMessage(Message message, NewMailForm form) {
         List<User> recipients = usersByUsernames(form.getTo());
         List<User> copyRecipients = usersByUsernames(form.getCc());
         List<User> hiddenCopyRecipients = usersByUsernames(form.getBcc());
@@ -238,6 +259,7 @@ public class MessagelServiceImpl implements MessagelService {
                 );
 
         message.setMessageUsers(messageUsers);
+        return messageUsers;
     }
 
     @Transactional

@@ -10,18 +10,19 @@ import java.util.Objects;
 @Data
 public class MyContact {
 
-    @EmbeddedId
-    private MyContactId id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "ME_ID", insertable = false, updatable = false)
+    @JoinColumn(name = "ME_ID")
     private User me;
 
     @ManyToOne
-    @JoinColumn(name = "MY_CONTACT_ID", insertable = false, updatable = false)
+    @JoinColumn(name = "MY_CONTACT_ID")
     private User myContact;
 
-    @Embeddable
+   /* @Embeddable
     @Data
     public static class MyContactId implements Serializable {
 
@@ -49,7 +50,7 @@ public class MyContact {
         public int hashCode() {
             return Objects.hashCode(this);
         }
-
     }
+    */
 
 }
