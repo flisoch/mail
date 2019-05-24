@@ -17,8 +17,8 @@
                             <div class=nav>
                                 <ul>
                                     <li><h6>General</h6><h6> |</h6></li>
-                                    <li><a href="settings/folders"><h6>Folders</h6></a><h6> |</h6></li>
-                                    <li><a href="settings/filters"><h6>Filters</h6></a></li>
+                                    <li><a href="/settings/folders"><h6>Folders</h6></a><h6> |</h6></li>
+                                    <li><a href="/settings/filters"><h6>Filters</h6></a></li>
                                 </ul>
                             </div>
                         </td>

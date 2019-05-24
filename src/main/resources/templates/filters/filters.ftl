@@ -20,9 +20,9 @@
                         <td>
                             <div class=nav>
                                 <ul>
-                                    <li><a href="settings/general"><h6>General</h6></a><h6> |</h6></li>
-                                    <li><a href="settings/folders"><h6>Folders</h6></a><h6> |</h6></li>
-                                    <li class="settings/filters"><h6>Filters</h6></li>
+                                    <li><a href="/settings/general"><h6>General</h6></a><h6> |</h6></li>
+                                    <li><a href="/settings/folders"><h6>Folders</h6></a><h6> |</h6></li>
+                                    <li><h6>Filters</h6></li>
                                 </ul>
                             </div>
                         </td>

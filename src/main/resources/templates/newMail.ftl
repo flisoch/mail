@@ -23,17 +23,22 @@
                     <table width=100% cellpadding=2 cellspacing=0 border=0 class=compose>
                         <tr>
                             <td width=1% align=right valign=top nowrap><b id=l-to>To:</b></td>
-                            <td><textarea onkeyup="contactsByName();" name=to id=to rows=3 cols=55 wrap=virtual class=i
+                            <td><textarea onkeyup="contactsByName('to');" name=to id=to rows=3 cols=55 wrap=virtual
+                                          class=i
                                           autofocus="autofocus" aria-labelledby=l-to></textarea>
-                        <div valign=top id="contacts" hidden></div>
+                                <div valign=top id="contacts-to" hidden></div>
                         <tr>
                             <td align=right nowrap><b id=l-cc>Cc:</b></td>
-                            <td><input name=cc id=cc value="" type=text size=40 class=i autocomplete=off
+                            <td><input onkeyup="contactsByName('cc');" name=cc id=cc value="" type=text size=40 class=i
+                                       autocomplete=off
                                        aria-labelledby=l-cc>
+                                <div valign=top id="contacts-cc" hidden></div>
                         <tr>
                             <td align=right nowrap><b id=l-bcc>Bcc:</b></td>
-                            <td><input name=bcc id=bcc value="" type=text size=40 class=i
+                            <td><input onkeyup="contactsByName('bcc');" name=bcc id=bcc value="" type=text size=40
+                                       class=i
                                        autocomplete=off aria-labelledby=l-bcc>
+                                <div valign=top id="contacts-bcc" hidden></div>
                         <tr>
                             <td align=right nowrap><b id=l-s>Subject:</b></td>
                             <td><input name=subject value="" type=text size=40 class=i
