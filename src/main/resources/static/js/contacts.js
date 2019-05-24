@@ -40,10 +40,12 @@ const myDoStuffFunc = (event) => {
     for (let name of names) {
         stringNames += name + ", ";
     }
+
+    stringNames = stringNames.slice(0, stringNames.length -2);
     console.log(stringNames);
     $(`#to`).empty();
     $(`#to`)[0].value = stringNames;
-
+    $("#to").focus();
     $('#contacts').empty();
 
 
