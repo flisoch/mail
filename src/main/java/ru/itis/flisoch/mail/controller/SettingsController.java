@@ -9,8 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import ru.itis.flisoch.mail.domain.User;
 import ru.itis.flisoch.mail.dto.FilterShortDto;
 import ru.itis.flisoch.mail.form.FilterForm;
+import ru.itis.flisoch.mail.form.GeneralSettingsForm;
 import ru.itis.flisoch.mail.security.MailUserDetails;
 import ru.itis.flisoch.mail.service.FilterService;
+import ru.itis.flisoch.mail.service.UserService;
 
 import java.util.List;
 
@@ -19,10 +21,34 @@ import java.util.List;
 public class SettingsController {
 
     private final FilterService filterService;
+    private final UserService userService;
 
     @Autowired
-    public SettingsController(FilterService filterService) {
+    public SettingsController(FilterService filterService, UserService userService) {
         this.filterService = filterService;
+        this.userService = userService;
+    }
+
+    @GetMapping
+    public String settings() {
+        return "redirect:/settings/general";
+    }
+
+    @GetMapping("/general")
+    public String generalSettings(Authentication authentication, ModelMap modelMap) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        String signature = user.getSignature();
+        modelMap.put("signature", signature);
+        return "settings/general";
+    }
+
+    @PostMapping
+    @ResponseBody
+    public ResponseEntity addSignature(Authentication authentication, ModelMap modelMap,
+                                       @RequestBody GeneralSettingsForm form) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        String signature = userService.addSignature(user, form.getSignature());
+        return ResponseEntity.ok(signature);
     }
 
     @GetMapping("/filters")

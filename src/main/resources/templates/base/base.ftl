@@ -106,7 +106,7 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" defer></script>
         <script src="/static/js/message.js"></script>
         <script src="/static/js/filters.js"></script>
-        <script src="/static/js/folders.js"></script>
+        <script src="/static/js/settings.js"></script>
         <script src="/static/js/contacts.js"></script>
         <script src="/static/js/dateFormatter.js"></script>
 

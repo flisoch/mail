@@ -5,6 +5,7 @@
 
             <#if user??>
             <b class=gb4>${user.username}</b> |
+            <a href="/settings" class=gb4>Settings</a> | </nobr>
             <a target=_top id=gb_71 href="/logout" class=gb4>Sign out</a></nobr>
             <#else>
                 Anonimus

@@ -2,6 +2,7 @@ package ru.itis.flisoch.mail.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.itis.flisoch.mail.domain.DefaultFolderNames;
 import ru.itis.flisoch.mail.domain.Folder;
 import ru.itis.flisoch.mail.domain.User;
@@ -38,6 +39,14 @@ public class UserServiceImpl implements UserService {
         user = userRepository.save(user);
         generateDefaultFolders(user);
         return UserDto.from(user);
+    }
+
+    @Override
+    @Transactional
+    public String addSignature(User user, String signature) {
+        user.setSignature(signature);
+        user = userRepository.save(user);
+        return signature;
     }
 
     private void generateDefaultFolders(User user) {
