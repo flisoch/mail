@@ -8,10 +8,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.flisoch.mail.domain.User;
 import ru.itis.flisoch.mail.dto.FilterShortDto;
+import ru.itis.flisoch.mail.dto.FolderDto;
 import ru.itis.flisoch.mail.form.FilterForm;
+import ru.itis.flisoch.mail.form.FolderForm;
 import ru.itis.flisoch.mail.form.GeneralSettingsForm;
 import ru.itis.flisoch.mail.security.MailUserDetails;
 import ru.itis.flisoch.mail.service.FilterService;
+import ru.itis.flisoch.mail.service.FolderService;
 import ru.itis.flisoch.mail.service.UserService;
 
 import java.util.List;
@@ -22,11 +25,13 @@ public class SettingsController {
 
     private final FilterService filterService;
     private final UserService userService;
+    private final FolderService folderService;
 
     @Autowired
-    public SettingsController(FilterService filterService, UserService userService) {
+    public SettingsController(FilterService filterService, UserService userService, FolderService folderService) {
         this.filterService = filterService;
         this.userService = userService;
+        this.folderService = folderService;
     }
 
     @GetMapping
@@ -51,6 +56,39 @@ public class SettingsController {
         return ResponseEntity.ok(signature);
     }
 
+    @GetMapping("/folders")
+    public String foldersSettings(Authentication authentication, ModelMap modelMap) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        List<FolderDto> folders = folderService.customUserFolders(user);
+        modelMap.put("customFolders", folders);
+        return "settings/folders";
+    }
+
+    @PostMapping("/folders")
+    public String newFolder(Authentication authentication, String folderName) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        folderService.addFolder(user, folderName);
+        return "redirect:/settings/folders";
+    }
+
+    @PutMapping("/folders/{folderId}")
+    @ResponseBody
+    public ResponseEntity newFolder(Authentication authentication,
+                            @PathVariable Long folderId,
+                            @RequestBody FolderForm form) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        FolderDto folder = folderService.editFolder(user, folderId, form);
+        return ResponseEntity.ok(folder);
+    }
+
+    @DeleteMapping("/folders/{folderId}")
+    @ResponseBody
+    public ResponseEntity deleteFolder(Authentication authentication, @PathVariable Long folderId) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        folderService.deleteFolder(user, folderId);
+        return ResponseEntity.status(200).build();
+    }
+
     @GetMapping("/filters")
     public String myFilters(Authentication authentication, ModelMap modelMap) {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
@@ -73,7 +111,7 @@ public class SettingsController {
 
     @DeleteMapping("/filters/{filterId}")
     @ResponseBody
-    public ResponseEntity newFilter(Authentication authentication, @PathVariable Long filterId) {
+    public ResponseEntity deleteFilter(Authentication authentication, @PathVariable Long filterId) {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
         filterService.deleteFilter(user, filterId);
         return ResponseEntity.status(200).build();

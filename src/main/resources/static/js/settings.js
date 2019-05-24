@@ -1,11 +1,11 @@
 const addFolder = () => {
     let folderName = $("#new-folder").value;
     let data = {
-        folderName: folderFrom,
+        folderName: folderName,
     };
     console.log(JSON.stringify(data));
 
-    fetch("/folders", {
+    fetch("/settings/folders", {
         method: 'POST',
         body: JSON.stringify(data),
         headers: new Headers({
@@ -14,6 +14,43 @@ const addFolder = () => {
     })
         .then(response => {
 
+            }
+        );
+};
+
+const renameFolder = (folderId) => {
+    let folderName = $(`#change-folder-${folderId}-text`)[0].value;
+    let data = {
+        name: folderName,
+    };
+    console.log(JSON.stringify(data));
+
+    fetch(`/settings/folders/${folderId}`, {
+        method: 'PUT',
+        body: JSON.stringify(data),
+        headers: new Headers({
+            'Content-Type': 'application/json'
+        }),
+    })
+        .then(response => {
+            $(`#folder-${folderId}-name`)[0].children[0].childNodes[0].data = folderName;
+            $(`#custom-folder-${folderId}-name`)[0].children[0].children[0].childNodes[0].data= folderName;
+            $(`#change-folder-${folderId}-text`)[0].value = '';
+
+            }
+        );
+};
+const removeFolder = (folderId) => {
+
+    fetch(`/settings/folders/${folderId}`, {
+        method: 'DELETE',
+        headers: new Headers({
+            'Content-Type': 'application/json'
+        }),
+    })
+        .then(response => {
+            $(`#folder-${folderId}`).empty();
+            $(`#custom-folder-${folderId}`).empty();
             }
         );
 };

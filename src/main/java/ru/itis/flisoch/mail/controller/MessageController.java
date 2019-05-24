@@ -63,7 +63,8 @@ public class MessageController {
         User sender = ((MailUserDetails) authentication.getPrincipal()).getUser();
         MessageDto mail = messagelService.save(form, sender);
         modelMap.put("mail", mail);
-        return "redirect:/mail/" + mail.getId();
+//        return "redirect:/mail/" + mail.getId();
+        return "redirect:/mail/SENT";
     }
 
     @PutMapping

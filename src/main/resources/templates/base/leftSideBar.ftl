@@ -5,28 +5,16 @@
                 <td><a href="/mail/new">Compose Mail</a>
                     <#if folders??>
                     <#list folders as folder>
-            <tr>
+            <tr id="folder-${folder.id}">
                 <#if currentFolder?? && currentFolder == folder.name>
 
-                <td bgcolor="#C3D9FF"><a href="/mail/${folder.name}">${folder.name}&nbsp;</a>
-
+                <td id="folder-${folder.id}-name" bgcolor="#C3D9FF"><a href="/mail/${folder.name}">${folder.name}</a>
                     <#else>
-                <td><a href="/mail/${folder.name}">${folder.name}&nbsp;</a>
+                <td id="folder-${folder.id}-name"><a href="/mail/${folder.name}">${folder.name}</a>
 
                     </#if>
                     </#list>
                     </#if>
-
-            <tr>
-                <td>
-                    <form action="/folders" method=POST>
-                        <input id="new-folder" width="75%" size=14 maxlength=40 title="new folder"
-                               name="folderName" placeholder="new folder">
-                        <span><input type="submit" width="25%" value="Add"></span>
-
-                    </form>
-                </td>
-            </tr>
         </table>
     </td>
 
