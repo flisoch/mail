@@ -1,8 +1,7 @@
 <#macro navbar>
     <div id=guser width=100%>
-        <nobr><span id=gbn class=gbi></span>
+        <span id=gbn class=gbi></span>
             <span id=gbf class=gbf></span>
-
             <#if user??>
             <b class=gb4>${user.username}</b> |
             <a href="/settings" class=gb4>Settings</a> | </nobr>
@@ -27,7 +26,7 @@
         <tr>
             <form action="/mail/search" method=POST
             <table width=100% cellpadding=0 cellspacing=0 border=0>
-                <<#--td width=1% height=25 nowrap><input size=28 maxlength=2048 title="Search"
+                <#--<td width=1% height=25 nowrap><input size=28 maxlength=2048 title="Search"
                                                      value=""><input type=submit value="Search Mail">
                 </td>
                 <td><font size=1><a href="/mail/search-options" st=70>Show search options</a></font>

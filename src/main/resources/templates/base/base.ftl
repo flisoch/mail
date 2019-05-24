@@ -108,6 +108,7 @@
         <script src="/static/js/filters.js"></script>
         <script src="/static/js/settings.js"></script>
         <script src="/static/js/contacts.js"></script>
+        <script src="/static/js/registration.js"></script>
         <script src="/static/js/dateFormatter.js"></script>
 
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
