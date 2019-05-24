@@ -13,7 +13,7 @@ import java.util.Objects;
 @EqualsAndHashCode(of = {"id"})
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
+@Entity(name = "ServiceUser")
 @Table(name = "serviceUser")
 public class User {
     @Id

@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.itis.flisoch.mail.domain.MyContact;
 import ru.itis.flisoch.mail.domain.User;
 import ru.itis.flisoch.mail.dto.UserDto;
-import ru.itis.flisoch.mail.repository.ContactRepository;
+import ru.itis.flisoch.mail.form.ContactForm;
 import ru.itis.flisoch.mail.repository.UserRepository;
 
 import java.util.List;
@@ -16,18 +16,21 @@ import java.util.stream.Collectors;
 @Service
 public class ContactServiceImpl implements ContactService {
 
-    private final ContactRepository contactRepository;
     private final UserRepository userRepository;
 
     @Autowired
-    public ContactServiceImpl(ContactRepository contactRepository, UserRepository userRepository) {
-        this.contactRepository = contactRepository;
+    public ContactServiceImpl( UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
-    public List<UserDto> myContactsByNameLike(User authUser, String name) {
-        List<MyContact> contacts = contactRepository.findByMeAndMyContact_UsernameLike(authUser, name);
+    @Transactional
+    public List<UserDto> myContactsByNameLike(User authUser, ContactForm form) {
+        User user = userRepository.findByUsername(authUser.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+        List<MyContact> contacts = user.getContacts().stream()
+                .filter(myContact -> myContact.getMyContact().getUsername().startsWith(form.getUsername()))
+                .collect(Collectors.toList());
         return contacts.stream()
                 .map(myContact -> UserDto.from(myContact.getMyContact())).collect(Collectors.toList());
     }

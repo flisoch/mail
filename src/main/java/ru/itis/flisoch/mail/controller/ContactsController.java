@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import ru.itis.flisoch.mail.domain.User;
 import ru.itis.flisoch.mail.dto.UserDto;
+import ru.itis.flisoch.mail.form.ContactForm;
 import ru.itis.flisoch.mail.security.MailUserDetails;
 import ru.itis.flisoch.mail.service.ContactService;
 
@@ -35,10 +36,10 @@ public class ContactsController {
         return ResponseEntity.ok(contacts);
     }
 
-    @GetMapping("/like")
-    public ResponseEntity contactsByNameLike(Authentication authentication, @RequestBody String username) {
+    @PostMapping("/like")
+    public ResponseEntity contactsByNameLike(Authentication authentication, @RequestBody ContactForm form) {
         User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
-        List<UserDto> contacts = contactService.myContactsByNameLike(user, username);
+        List<UserDto> contacts = contactService.myContactsByNameLike(user, form);
         return ResponseEntity.ok(contacts);
     }
 }
