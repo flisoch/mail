@@ -72,6 +72,7 @@
                                     <tr id="message_${message.id}"
                                         <#if message.status="READ">bgcolor="#ffffff"</#if>
                                             <#if message.status="RECEIVED">bgcolor="#E8EEF7"</#if>
+                                            <#if message.status="SENT">bgcolor="#ffe4b5"</#if>
                                     >
                                         <td width=1% nowrap>
                                             <input type=checkbox name=t value="${message.id}">

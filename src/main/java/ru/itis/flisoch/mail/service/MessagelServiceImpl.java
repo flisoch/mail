@@ -68,7 +68,7 @@ public class MessagelServiceImpl implements MessagelService {
         mUsers.forEach(mUser -> {
             AtomicBoolean inContacts = new AtomicBoolean(false);
             contacts.forEach(contact -> {
-                if (contact.getMyContact().equals(mUser.getRecipient())){
+                if (contact.getMyContact().equals(mUser.getRecipient())) {
                     inContacts.set(true);
                 }
             });
@@ -130,8 +130,13 @@ public class MessagelServiceImpl implements MessagelService {
         User user = userRepository.findByUsername(authUser.getUsername())
                 .orElseThrow(() -> new UsernameNotFoundException("user not found"));
         List<MessageUser> messageUsers = messageUserRepository
-                .findByRecipientAndMessage_IdIn(user, Arrays.asList(messagesAndActions.getMessagesId()));
-
+                .findByRecipientAndMessage_IdIn(user, Arrays.asList(messagesAndActions.getMessagesId()))
+                .stream().filter(messageUser -> {
+                    if (messagesAndActions.getFolderFrom().equals(DefaultFolderNames.SENT.name())) {
+                        return messageUser.getStatus().equals(MessageStatus.SENT);
+                    }
+                    return true;
+                }).collect(Collectors.toList());;
         Arrays.asList(messagesAndActions.getActions()).forEach(
                 action -> {
                     if (action.equals(MessageAction.MARKREAD) || action.equals(MessageAction.MARKUNREAD)
@@ -210,6 +215,11 @@ public class MessagelServiceImpl implements MessagelService {
                                     folder.getName().equals(folderTo))
                             .findAny()
                             .orElseThrow(() -> new ResourceNotFoundException("folder" + " not found"));
+                    if (to.getName().equals(DefaultFolderNames.SENT.name())) {
+                        if (!messageUser.getStatus().equals(MessageStatus.SENT)) {
+                            return;
+                        }
+                    }
                     to.getMessages().add(messageUser);
                     folderRepository.save(from);
                     folderRepository.save(to);
@@ -321,8 +331,7 @@ public class MessagelServiceImpl implements MessagelService {
                 if (filter.getMarkAs().equals(MessageAction.MARKREAD)
                         && !mUser.getStatus().equals(MessageStatus.READ)) {
                     mUser.setStatus(MessageStatus.READ);
-                }
-                else if (filter.getMarkAs().equals(MessageAction.MARKUNREAD)
+                } else if (filter.getMarkAs().equals(MessageAction.MARKUNREAD)
                         && !mUser.getStatus().equals(MessageStatus.RECEIVED)) {
                     mUser.setStatus(MessageStatus.RECEIVED);
                 }
