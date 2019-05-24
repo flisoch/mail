@@ -23,32 +23,17 @@ public class MessageDto {
     private List<UserDto> to;
     private List<UserDto> bcc;
     private MessageStatus status;
+    private MessageDto parent;
 
     public static MessageDto from(Message message) {
         long epoch = message.getSendTime().toInstant(ZoneOffset.UTC).toEpochMilli();
-        List<UserDto> cc = new ArrayList<>();
-        List<UserDto> to = new ArrayList<>();
-        List<UserDto> bcc = new ArrayList<>();
-        message.getMessageUsers()
-                .forEach(messageUser -> {
-                            if (messageUser.isCc()) {
-                                cc.add(UserDto.from(messageUser.getRecipient()));
-                            } else if (messageUser.isNorm()) {
-                                to.add(UserDto.from(messageUser.getRecipient()));
-                            } else if (messageUser.isBcc()) {
-                                bcc.add(UserDto.from(messageUser.getRecipient()));
-                            }
-                        }
-                );
+
         return MessageDto.builder()
                 .id(message.getId())
                 .subject(message.getSubject())
                 .text(message.getText())
                 .sender(UserDto.from(message.getSender()))
                 .sendTime(epoch)
-                .cc(cc)
-                .to(to)
-                .bcc(bcc)
                 .build();
     }
 }

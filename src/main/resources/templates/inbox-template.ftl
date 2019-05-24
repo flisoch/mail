@@ -55,10 +55,7 @@
                                        value="Go">
                                 <a href="?&amp;" class="searchPageLink">Refresh</a>
                             </td>
-                            <td align=right><b>1</b>&nbsp;-&nbsp;<b>10</b> of about <b>17</b> &nbsp;
-                                <a href="?&amp;st=10" class="searchPageLink">
-                                    <b>Older &#8250;</b>
-                                </a>
+
                     </table>
 
                     <table id="messages" width=100% cellpadding=2 cellspacing=0 border=0 bgcolor=#e8eef7
@@ -79,9 +76,9 @@
                                             <img src="https://ssl.gstatic.com/ui/v1/icons/mail/images/cleardot.gif"
                                                  width=15 height=15 border=0 alt="">
                                         </td>
-                                        <td width=25%> ${message.sender.username} (4)</td>
+                                        <td width=25%> ${message.sender.username}</td>
                                         <td width=73%>
-                                            <a href="?&amp;th=16ad184b480a8233&amp;v=c">
+                                            <a href="/mail/messages/${message.id}">
                                     <span class=ts>
                                         <#if message.subject??>
                                             <font size=1><font color=#006633></font></font> ${message.subject}
@@ -90,7 +87,6 @@
                                         </#if>
                                         <font color=#7777CC>
                                             ${message.text}
-                                            ${message}
                                         </font>
                                     </span>
                                             </a>
@@ -146,10 +142,6 @@
                                        value="Go">
                                 <a href="?&amp;" class="searchPageLink">Refresh</a>
                             </td>
-                            <td align=right><b>1</b>&nbsp;-&nbsp;<b>10</b> of about <b>17</b> &nbsp;
-                                <a href="?&amp;st=10" class="searchPageLink">
-                                    <b>Older &#8250;</b>
-                                </a>
                     </table>
 
         </tr>

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.itis.flisoch.mail.domain.*;
 import ru.itis.flisoch.mail.dto.MessageDto;
+import ru.itis.flisoch.mail.dto.UserDto;
 import ru.itis.flisoch.mail.exception.LogicalException;
 import ru.itis.flisoch.mail.exception.ResourceNotFoundException;
 import ru.itis.flisoch.mail.form.MessagesAndActions;
@@ -136,7 +137,8 @@ public class MessagelServiceImpl implements MessagelService {
                         return messageUser.getStatus().equals(MessageStatus.SENT);
                     }
                     return true;
-                }).collect(Collectors.toList());;
+                }).collect(Collectors.toList());
+        ;
         Arrays.asList(messagesAndActions.getActions()).forEach(
                 action -> {
                     if (action.equals(MessageAction.MARKREAD) || action.equals(MessageAction.MARKUNREAD)
@@ -172,6 +174,64 @@ public class MessagelServiceImpl implements MessagelService {
 
                 });
 
+    }
+
+    @Override
+    @Transactional
+    public List<MessageDto> getAllByRecipient(User authUser, Long messageId) {
+        User user = userRepository.findByUsername(authUser.getUsername())
+                .orElseThrow(() -> new UsernameNotFoundException("user not found"));
+
+        List<MessageUser> messageUsers = messageUserRepository
+                .findByRecipientAndMessage_Id(user, messageId);
+        return messageUsers.stream().filter(messageUser -> !messageUser.getStatus().equals(MessageStatus.SENT))
+                .peek(messageUser -> {
+                    messageUser.setStatus(MessageStatus.READ);
+                    messageUserRepository.save(messageUser);
+                })
+                .map(this::dtoFromMessageUser).collect(Collectors.toList());
+
+    }
+
+    private MessageDto dtoFromMessageUser(MessageUser messageUser) {
+        Message message = messageUser.getMessage();
+        MessageDto messageDto = MessageDto.from(message);
+
+        List<UserDto> cc = new ArrayList<>();
+        List<UserDto> to = new ArrayList<>();
+        List<UserDto> bcc = new ArrayList<>();
+        message.getMessageUsers()
+                .forEach(mUser -> {
+                            if (mUser.isCc()) {
+                                cc.add(UserDto.from(mUser.getRecipient()));
+                            } else if (mUser.isNorm()) {
+                                to.add(UserDto.from(mUser.getRecipient()));
+                            } else if (mUser.isBcc()) {
+                                bcc.add(UserDto.from(mUser.getRecipient()));
+                            }
+                        }
+                );
+        messageDto.setTo(to);
+        messageDto.setCc(cc);
+        messageDto.setBcc(bcc);
+        if (message.getParentMessage() != null) {
+            messageDto.setParent(findParent(messageUser));
+        }
+        return messageDto;
+    }
+
+    @Transactional
+    public MessageDto findParent(MessageUser messageUser) {
+        Message message = messageUser.getMessage();
+        User sender = message.getSender();
+        Message parentMessage = message.getParentMessage();
+
+        MessageUser messageUser2 = parentMessage.getMessageUsers().stream()
+                .filter(messageUser1 ->  messageUser1.getRecipient().equals(sender)
+                        && messageUser1.getMessage().equals(message.getParentMessage()))
+
+                .findAny().orElseThrow(() -> new LogicalException("blabla"));
+        return dtoFromMessageUser(messageUser2);
     }
 
     @Transactional

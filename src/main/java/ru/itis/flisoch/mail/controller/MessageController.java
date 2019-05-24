@@ -51,7 +51,21 @@ public class MessageController {
         modelMap.put("messages", sentMessages);
         return "sent";
     }
+    @GetMapping(path = "/messages/{messageId}")
+    public String getMessage(Authentication authentication, ModelMap modelMap, @PathVariable Long messageId) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        List<MessageDto> sentMessages = messagelService.getAllByRecipient(user, messageId);
+        modelMap.put("messages", sentMessages);
+        return "messages";
+    }
 
+    @GetMapping(path = "/messages/{messageId}/reply")
+    public String reply(Authentication authentication, ModelMap modelMap, @PathVariable Long messageId) {
+        User user = ((MailUserDetails) authentication.getPrincipal()).getUser();
+        List<MessageDto> sentMessages = messagelService.getAllByRecipient(user, messageId);
+        modelMap.put("messages", sentMessages);
+        return "reply";
+    }
 
     @GetMapping(path = "/search-options")
     public String searchOptionsPage() {
@@ -63,8 +77,7 @@ public class MessageController {
         User sender = ((MailUserDetails) authentication.getPrincipal()).getUser();
         MessageDto mail = messagelService.save(form, sender);
         modelMap.put("mail", mail);
-//        return "redirect:/mail/" + mail.getId();
-        return "redirect:/mail/SENT";
+        return "redirect:/mail/messages/" + mail.getId();
     }
 
     @PutMapping

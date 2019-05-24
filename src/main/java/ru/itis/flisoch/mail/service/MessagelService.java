@@ -15,4 +15,6 @@ public interface MessagelService {
     void handleMail(User user, MessagesAndActions messagesAndActions);
 
     void deleteMessages(User user, Long[] messagesId);
+
+    List<MessageDto> getAllByRecipient(User user, Long id);
 }
